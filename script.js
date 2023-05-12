@@ -1,5 +1,4 @@
 
-
 function draw() {
     const canvas = document.querySelector("#board");
 
