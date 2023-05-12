@@ -1,9 +1,10 @@
 
 export class Board {
 
-    constructor(canvas, ctx) {
+    constructor(canvas, ctx, isWhite = true) {
         this.canvas = canvas;
         this.ctx = ctx;
+        this.isWhite = isWhite;
     }
 
     drawSquare([posX, posY], isColored = false) {
@@ -53,21 +54,51 @@ export class Board {
         //real square size
         let squareSize = this.canvas.getBoundingClientRect().width / 8;
     
-        let squarePos = this.screenToSquare(squareSize, [posX, posY]);
+        let [squareX, squareY] = this.screenToSquare(squareSize, [posX, posY]);
     
-        let coordsText = "squareX: " + squarePos[0] + ", squareY: " + squarePos[1];
+        let coordsText = "squareX: " + squareX + ", squareY: " + squareY;
         console.log("posX: " + posX + ", posY: " + posY);
     
         document.getElementById("position").innerHTML = coordsText;
     
         //If the mouse is over the board
-        if(posX >= this.canvas.getBoundingClientRect().x && posX <= this.canvas.getBoundingClientRect().right
-            && posY >= this.canvas.getBoundingClientRect().y && posY <= this.canvas.getBoundingClientRect().bottom)
+        if(this.posIsOver([posX, posY]))
         {
             this.hovering( this.screenToSquare(squareSize,[posX,posY]) );
         } else {
             console.log('outside');
             this.drawBoard();
         }
+    }
+
+    mouseClickEvent(e) {
+        let posX = (e.clientX - this.canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this.canvas.getBoundingClientRect().y);
+    
+    
+        //If the mouse is over the board
+        if(this.posIsOver([posX, posY]))
+        {
+            alert(this.coordsToNotation([posX,posY]));
+        }
+    }
+
+    coordsToNotation([posX, posY]) {
+        let squareSize = this.canvas.getBoundingClientRect().width / 8;
+        let [squareX, squareY] = this.screenToSquare(squareSize, [posX, posY]);
+        let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+        if(!this.isWhite) {
+            squareX = 9 - squareX;
+        } else {
+            squareY = 9 - squareY;
+        }
+
+        return letters[squareX - 1].concat(squareY);
+    }
+
+    posIsOver([posX, posY]) {
+        return (posX >= this.canvas.getBoundingClientRect().x && posX <= this.canvas.getBoundingClientRect().right
+            && posY >= this.canvas.getBoundingClientRect().y && posY <= this.canvas.getBoundingClientRect().bottom)
     }
 }
