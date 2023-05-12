@@ -13,7 +13,7 @@ export class Board {
         this.ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.canvas.width / 8, this.canvas.height / 8);
     }
     
-    drawBoard(canvas, ctx) {
+    drawBoard() {
 
         for(let y = 1; y <= 8; y++)
         {
