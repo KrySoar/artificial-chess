@@ -1,7 +1,7 @@
 import {Board} from './board.js';
 
 
-function draw() {
+function init() {
     const canvas = document.querySelector("#board");
     const ctx = canvas.getContext("2d");
 
@@ -18,4 +18,4 @@ function draw() {
     chessboard.drawBoard();
 }
 
-window.onlonad = draw();
+window.onload = init();
