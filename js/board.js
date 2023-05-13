@@ -1,5 +1,5 @@
 import * as utils from './utils.js';
-import {Piece, King, Queen, Bishop, Knight, Rook} from './pieces.js';
+import {Piece, King, Queen, Bishop, Knight, Rook, Pawn} from './pieces.js';
 
 export class Board {
     #canvas;
@@ -100,7 +100,7 @@ export class Board {
             && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom)
     }
 
-    importFEN(FEN) {
+    importFEN(FEN, tileset) {
         //https://www.chess.com/terms/fen-chess
         //6 fields separated by spaces
         //lower are black upper are white
@@ -117,19 +117,87 @@ export class Board {
 
         const [position, trait, castling,
             enPassant, halfmoveNb, fullmoveNb] = FEN.split(' ');
-
-        // for(let i = 0; i < position.length; i++) {
-        //     console.log(typeof position[i]);
-        // }
-
-        let i = 0;
-        for(let y = 1; y <= 8; y++)
+        
+        let x = 1;
+        let y = 1;
+        for(let c = 0; c <= position.length; c++)
         {
-            for(let x = 1; x <= 8; x++, i++)
-            {
-                //console.log(position[i]);
-                //console.log(utils.squareToNotation([x,y], this.#isWhite));
+            let char = position[c];
+            let nb = parseInt(char);
+
+            if(nb != NaN && (nb >=1 && nb <= 8) ) {
+                x += nb;
             }
+
+            switch(char) {
+                case 'r':
+                    this.addPiece(new Rook(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
+                    x++;
+                    break;
+
+                case 'n':
+                    this.addPiece(new Knight(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
+                    x++;
+                    break;
+
+                case 'b':
+                    this.addPiece(new Bishop(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
+                    x++;
+                    break;
+
+                case 'q':
+                    this.addPiece(new Queen(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
+                    x++;
+                    break;
+
+                case 'k':
+                    this.addPiece(new King(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
+                    x++;
+                    break;
+
+                case 'p':
+                    this.addPiece(new Pawn(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
+                    x++;
+                    break;
+
+
+                case 'R':
+                    this.addPiece(new Rook(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
+                    x++;
+                    break;
+
+                case 'N':
+                    this.addPiece(new Knight(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
+                    x++;
+                    break;
+
+                case 'B':
+                    this.addPiece(new Bishop(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
+                    x++;
+                    break;
+
+                case 'Q':
+                    this.addPiece(new Queen(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
+                    x++;
+                    break;
+
+                case 'K':
+                    this.addPiece(new King(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
+                    x++;
+                    break;
+
+                case 'P':
+                    this.addPiece(new Pawn(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
+                    x++;
+                    break;
+                
+                case '/':
+                    y++;
+                    x = 1;
+                    break;
+            }
+            //console.log(position[i]);
+            //console.log(utils.squareToNotation([x,y], this.#isWhite));
         }
 
     }
