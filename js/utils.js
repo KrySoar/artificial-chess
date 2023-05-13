@@ -1,0 +1,29 @@
+export function posToSquare(squareSize, [posX, posY]) {
+
+    let squareX = Math.floor(posX / squareSize) + 1;
+    let squareY = Math.floor(posY / squareSize) + 1;
+
+    return [squareX, squareY];
+}
+
+export function squareToPos(squareSize, [squareX, squareY]) {
+
+    let posX = (squareX - 1) * squareSize;
+    let posY = (squareY - 1) * squareSize;
+
+    return [posX, posY];
+}
+
+export function coordsToNotation(squareSize, [posX, posY], isWhite) {
+
+    let [squareX, squareY] = posToSquare(squareSize, [posX, posY]);
+    let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+    if(!isWhite) {
+        squareX = 9 - squareX;
+    } else {
+        squareY = 9 - squareY;
+    }
+
+    return letters[squareX - 1].concat(squareY);
+}

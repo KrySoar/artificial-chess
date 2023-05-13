@@ -1,5 +1,5 @@
 import {Board} from './board.js';
-
+import { Rook } from './pieces.js';
 
 function init() {
     const canvas = document.querySelector("#board");
@@ -16,6 +16,23 @@ function init() {
     });
 
     chessboard.drawBoard();
+
+    ///
+    const piecesImg = new Image();
+
+    let whiteRook = new Rook('a1', true, piecesImg);
+    
+    piecesImg.addEventListener("load", () => {
+        
+        whiteRook.draw(canvas, ctx);
+    }, false);
+
+
+    piecesImg.src = "../images/chesspieces.png";
+    
+
+
+    
 }
 
 window.onload = init();
