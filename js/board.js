@@ -1,21 +1,32 @@
 import * as utils from './utils.js';
+import {Piece, King, Queen, Bishop, Knight, Rook} from './pieces.js';
 
 export class Board {
     #canvas;
     #ctx;
     #isWhite;
-    #pieces = []; //Array of pieces 
+    #pieces;
     
 
     constructor(canvas, ctx, isWhite = true) {
         this.#canvas    = canvas;
         this.#ctx       = ctx;
         this.#isWhite   = isWhite;
+        this.#pieces    =  new Array();
+        
     }
 
     get isWhite()
     {
         return this.#isWhite;
+    }
+
+    addPiece(piece)
+    {
+        if(this.#pieces.length >= 64) {
+            throw new Error("Board is full !");
+        }
+        this.#pieces.push(piece)
     }
 
     drawSquare([posX, posY], isColored = false) {
@@ -31,6 +42,13 @@ export class Board {
             for(let x = 1; x <= 8; x++)
             {
                 this.drawSquare([x,y], ((x+y)%2 == 1));
+            }
+        }
+
+        for(let i = 0;i < this.#pieces.length; i++) {
+            
+            if(this.#pieces[i] != null && this.#pieces[i] instanceof Piece) {
+                this.#pieces[i].draw(this.#canvas, this.#ctx);
             }
         }
     }
@@ -52,7 +70,6 @@ export class Board {
         let [squareX, squareY] = utils.posToSquare(squareSize, [posX, posY]);
     
         let coordsText = "squareX: " + squareX + ", squareY: " + squareY;
-        //console.log("posX: " + posX + ", posY: " + posY);
     
         document.getElementById("position").innerHTML = coordsText;
     

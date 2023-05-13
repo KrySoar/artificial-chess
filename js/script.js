@@ -19,15 +19,11 @@ function init() {
 
     ///
     const piecesImg = new Image();
-
-    let whiteRook = new Rook('e4', true, piecesImg, chessboard);
-
-    let blackQueen = new Queen('f7', false, piecesImg, chessboard);
     
     piecesImg.addEventListener("load", () => {
         
-        whiteRook.draw(canvas, ctx);
-        blackQueen.draw(canvas, ctx);
+        chessboard.addPiece(new Rook('b8', true, piecesImg, chessboard));
+        chessboard.addPiece(new Queen('h4', false, piecesImg, chessboard));
 
     }, false);
 
