@@ -1,3 +1,5 @@
+import * as utils from './utils.js';
+
 export class Piece {
 
     _notationPos;

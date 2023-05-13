@@ -17,7 +17,7 @@ export function squareToPos(squareSize, [squareX, squareY]) {
 export function coordsToNotation(squareSize, [posX, posY], isWhite) {
 
     let [squareX, squareY] = posToSquare(squareSize, [posX, posY]);
-    let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
     if(!isWhite) {
         squareX = 9 - squareX;
@@ -26,4 +26,27 @@ export function coordsToNotation(squareSize, [posX, posY], isWhite) {
     }
 
     return letters[squareX - 1].concat(squareY);
+}
+
+export function notationToCoords(squareSize, notation, isWhite) {
+    
+    if(notation.length != 2)
+    {
+        throw new Error("Invalid notation. Please enter a valid chess notation such as 'e4'.")
+    }
+
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+    let [squareX, squareY] = notation;
+    squareX = letters.indexOf(squareX) + 1;
+
+    if(!isWhite) {
+        squareX = 9 - squareX;
+    } else {
+        squareY = 9 - squareY;
+    }
+
+    let [posX, posY] = squareToPos(squareSize, [squareX, squareY]);
+    
+    return [posX, posY];
 }
