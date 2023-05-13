@@ -16,16 +16,7 @@ export function squareToPos(squareSize, [squareX, squareY]) {
 
 export function coordsToNotation(squareSize, [posX, posY], isWhite) {
 
-    let [squareX, squareY] = posToSquare(squareSize, [posX, posY]);
-    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-
-    if(!isWhite) {
-        squareX = 9 - squareX;
-    } else {
-        squareY = 9 - squareY;
-    }
-
-    return letters[squareX - 1].concat(squareY);
+    return squareToNotation(posToSquare(squareSize, [posX, posY]), isWhite);
 }
 
 export function notationToCoords(squareSize, notation, isWhite) {
@@ -50,3 +41,20 @@ export function notationToCoords(squareSize, notation, isWhite) {
     
     return [posX, posY];
 }
+
+export function squareToNotation([squareX, squareY], isWhite) {
+
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+    if(!isWhite) {
+        squareX = 9 - squareX;
+    } else {
+        squareY = 9 - squareY;
+    }
+
+    return letters[squareX - 1].concat(squareY);
+}
+
+// export function notationToSquare(notation, isWhite) {
+
+// }

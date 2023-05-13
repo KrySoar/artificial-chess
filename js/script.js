@@ -25,6 +25,7 @@ function init() {
         chessboard.addPiece(new Rook('b8', true, piecesImg, chessboard));
         chessboard.addPiece(new Queen('h4', false, piecesImg, chessboard));
 
+        chessboard.importFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }, false);
 
 

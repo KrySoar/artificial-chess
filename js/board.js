@@ -99,4 +99,44 @@ export class Board {
         return (posX >= this.#canvas.getBoundingClientRect().x && posX <= this.#canvas.getBoundingClientRect().right
             && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom)
     }
+
+    importFEN(FEN) {
+        //https://www.chess.com/terms/fen-chess
+        //6 fields separated by spaces
+        //lower are black upper are white
+        //empty is a number 1-8
+        //ranks are separated by slash
+        //3rd field : The letter "k" indicates that kingside castling is available,
+        //      while "q" means that a player may castle queenside. The symbol "-" designates that neither side may castle. 
+        //4th field: square behind the pawn in algebraic notation .If no en passant targets available, the "-" symbol is used.
+        //      Even though no pawns may capture the e4-pawn, the FEN string would still contain the en passant target square e3 in its fourth field.
+        //5th field: Halfmove clock
+        //6th field: Fullmove number
+
+        //example starting game FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+        const [position, trait, castling,
+            enPassant, halfmoveNb, fullmoveNb] = FEN.split(' ');
+
+        // for(let i = 0; i < position.length; i++) {
+        //     console.log(typeof position[i]);
+        // }
+
+        let i = 0;
+        for(let y = 1; y <= 8; y++)
+        {
+            for(let x = 1; x <= 8; x++, i++)
+            {
+                //console.log(position[i]);
+                //console.log(utils.squareToNotation([x,y], this.#isWhite));
+            }
+        }
+
+    }
+
+    // exportFEN() {
+    //     let FEN;
+
+    //     return FEN
+    // }
 }
