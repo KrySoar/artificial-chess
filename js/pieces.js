@@ -15,6 +15,8 @@ export class Piece {
     _tileSquareSize = 200;
     _tileX;
     _tileY;
+    
+    _hasMoved = false;
 
 
     constructor(notationPos, isWhite, tileset, board) {
@@ -38,6 +40,42 @@ export class Piece {
 
 }
 
+export class King extends Piece {
+    _tileX = 0;
+
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
+    }
+
+}
+
+export class Queen extends Piece {
+    _tileX = 1;
+
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
+    }
+
+}
+
+export class Bishop extends Piece {
+    _tileX = 2;
+
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
+    }
+
+}
+
+export class Knight extends Piece {
+    _tileX = 3;
+
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
+    }
+
+}
+
 export class Rook extends Piece {
     _tileX = 4;
 
@@ -45,5 +83,13 @@ export class Rook extends Piece {
         super(notationPos, isWhite, tileset, board);
     }
 
+}
+
+export class Pawn extends Piece {
+    _tileX = 5;
+
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
+    }
 
 }

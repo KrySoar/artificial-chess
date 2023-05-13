@@ -1,5 +1,5 @@
 import {Board} from './board.js';
-import { Rook } from './pieces.js';
+import {King, Queen, Bishop, Knight, Rook} from './pieces.js';
 
 function init() {
     const canvas = document.querySelector("#board");
@@ -20,11 +20,15 @@ function init() {
     ///
     const piecesImg = new Image();
 
-    let whiteRook = new Rook('a1', true, piecesImg, chessboard);
+    let whiteRook = new Rook('e4', true, piecesImg, chessboard);
+
+    let blackQueen = new Queen('f7', false, piecesImg, chessboard);
     
     piecesImg.addEventListener("load", () => {
         
         whiteRook.draw(canvas, ctx);
+        blackQueen.draw(canvas, ctx);
+
     }, false);
 
 
