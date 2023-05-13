@@ -1,16 +1,19 @@
 
 export class Board {
+    #canvas;
+    #ctx;
+    #isWhite;
 
     constructor(canvas, ctx, isWhite = true) {
-        this.canvas = canvas;
-        this.ctx = ctx;
-        this.isWhite = isWhite;
+        this.#canvas = canvas;
+        this.#ctx = ctx;
+        this.#isWhite = isWhite;
     }
 
     drawSquare([posX, posY], isColored = false) {
-        let squareSize = this.canvas.width / 8;
-        this.ctx.fillStyle = isColored ? "#593300" : "#ffc67a"
-        this.ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.canvas.width / 8, this.canvas.height / 8);
+        let squareSize = this.#canvas.width / 8;
+        this.#ctx.fillStyle = isColored ? "#593300" : "#ffc67a"
+        this.#ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.#canvas.width / 8, this.#canvas.height / 8);
     }
     
     drawBoard() {
@@ -24,7 +27,7 @@ export class Board {
         }
     }
 
-    screenToSquare(squareSize, [posX, posY]) {
+    #screenToSquare(squareSize, [posX, posY]) {
 
         let squareX = Math.floor(posX / squareSize) + 1;
         let squareY = Math.floor(posY / squareSize) + 1;
@@ -32,7 +35,7 @@ export class Board {
         return [squareX, squareY];
     }
     
-    squareToScreen(squareSize, [squareX, squareY]) {
+    #squareToScreen(squareSize, [squareX, squareY]) {
 
         let posX = (squareX - 1) * squareSize;
         let posY = (squareY - 1) * squareSize;
@@ -40,55 +43,54 @@ export class Board {
         return [posX, posY];
     }
     
-    hovering([squareX, squareY]) {
+    #hovering([squareX, squareY]) {
         this.drawBoard();
-        this.ctx.fillStyle = "rgba(150, 200, 255, 0.5)";
-        let pos = this.squareToScreen(this.canvas.width / 8, [squareX,squareY]);
-        this.ctx.fillRect(pos[0], pos[1], this.canvas.width / 8, this.canvas.height / 8);
+        this.#ctx.fillStyle = "rgba(150, 200, 255, 0.5)";
+        let pos = this.#squareToScreen(this.#canvas.width / 8, [squareX,squareY]);
+        this.#ctx.fillRect(pos[0], pos[1], this.#canvas.width / 8, this.#canvas.height / 8);
     }
 
     mouseMoveEvent(e) {
-        let posX = (e.clientX - this.canvas.getBoundingClientRect().x);
-        let posY = (e.clientY - this.canvas.getBoundingClientRect().y);
+        let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
     
         //real square size
-        let squareSize = this.canvas.getBoundingClientRect().width / 8;
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
-        let [squareX, squareY] = this.screenToSquare(squareSize, [posX, posY]);
+        let [squareX, squareY] = this.#screenToSquare(squareSize, [posX, posY]);
     
         let coordsText = "squareX: " + squareX + ", squareY: " + squareY;
-        console.log("posX: " + posX + ", posY: " + posY);
+        //console.log("posX: " + posX + ", posY: " + posY);
     
         document.getElementById("position").innerHTML = coordsText;
     
         //If the mouse is over the board
-        if(this.posIsOver([posX, posY]))
+        if(this.#posIsOver([posX, posY]))
         {
-            this.hovering( this.screenToSquare(squareSize,[posX,posY]) );
+            this.#hovering( this.#screenToSquare(squareSize,[posX,posY]) );
         } else {
-            console.log('outside');
             this.drawBoard();
         }
     }
 
     mouseClickEvent(e) {
-        let posX = (e.clientX - this.canvas.getBoundingClientRect().x);
-        let posY = (e.clientY - this.canvas.getBoundingClientRect().y);
+        let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
     
     
         //If the mouse is over the board
-        if(this.posIsOver([posX, posY]))
+        if(this.#posIsOver([posX, posY]))
         {
-            alert(this.coordsToNotation([posX,posY]));
+            alert(this.#coordsToNotation([posX,posY]));
         }
     }
 
-    coordsToNotation([posX, posY]) {
-        let squareSize = this.canvas.getBoundingClientRect().width / 8;
+    #coordsToNotation([posX, posY]) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
         let [squareX, squareY] = this.screenToSquare(squareSize, [posX, posY]);
         let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-        if(!this.isWhite) {
+        if(!this.#isWhite) {
             squareX = 9 - squareX;
         } else {
             squareY = 9 - squareY;
@@ -97,8 +99,8 @@ export class Board {
         return letters[squareX - 1].concat(squareY);
     }
 
-    posIsOver([posX, posY]) {
-        return (posX >= this.canvas.getBoundingClientRect().x && posX <= this.canvas.getBoundingClientRect().right
-            && posY >= this.canvas.getBoundingClientRect().y && posY <= this.canvas.getBoundingClientRect().bottom)
+    #posIsOver([posX, posY]) {
+        return (posX >= this.#canvas.getBoundingClientRect().x && posX <= this.#canvas.getBoundingClientRect().right
+            && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom)
     }
 }
