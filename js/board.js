@@ -4,13 +4,18 @@ export class Board {
     #canvas;
     #ctx;
     #isWhite;
-    #board = []; //Array of pieces //wondering if I put it here or outside of the board class
+    #pieces = []; //Array of pieces 
     
 
     constructor(canvas, ctx, isWhite = true) {
         this.#canvas    = canvas;
         this.#ctx       = ctx;
         this.#isWhite   = isWhite;
+    }
+
+    get isWhite()
+    {
+        return this.#isWhite;
     }
 
     drawSquare([posX, posY], isColored = false) {

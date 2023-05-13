@@ -4,7 +4,7 @@ export class Piece {
 
     _notationPos;
     _isWhite;
-
+    _board;
     // _posX;
     // _posY;
 
@@ -17,9 +17,10 @@ export class Piece {
     _tileY;
 
 
-    constructor(notationPos, isWhite, tileset) {
+    constructor(notationPos, isWhite, tileset, board) {
         this._notationPos = notationPos;
         this._isWhite = isWhite;
+        this._board = board;
         this._tileY = !this._isWhite;
 
         this._tileset = tileset;
@@ -28,9 +29,11 @@ export class Piece {
     draw(canvas, ctx) {
         let squareSize = canvas.width / 8;
 
+        let [posX, posY] =  utils.notationToCoords(squareSize, this._notationPos, this._board.isWhite);
+
         //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
         ctx.drawImage(this._tileset, this._tileX*this._tileSquareSize, this._tileY*this._tileSquareSize, this._tileSquareSize, this._tileSquareSize,
-                        7*squareSize, 7*squareSize, squareSize, squareSize );
+                        posX, posY, squareSize, squareSize );
     }
 
 }
@@ -38,8 +41,8 @@ export class Piece {
 export class Rook extends Piece {
     _tileX = 4;
 
-    constructor(notationPos, isWhite, tileset) {
-        super(notationPos, isWhite, tileset);
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
     }
 
 

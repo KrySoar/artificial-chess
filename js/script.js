@@ -20,7 +20,7 @@ function init() {
     ///
     const piecesImg = new Image();
 
-    let whiteRook = new Rook('a1', true, piecesImg);
+    let whiteRook = new Rook('a1', true, piecesImg, chessboard);
     
     piecesImg.addEventListener("load", () => {
         
