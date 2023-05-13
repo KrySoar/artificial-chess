@@ -32,7 +32,7 @@ function init() {
     }, false);
 
 
-    piecesImg.src = "../images/chesspieces.png";
+    piecesImg.src = "../assets/imgs/chesspieces.png";
     
 
 
