@@ -5,7 +5,7 @@ function init() {
     const canvas = document.querySelector("#board");
     const ctx = canvas.getContext("2d");
 
-    const chessboard = new Board(canvas, ctx, false);
+    const chessboard = new Board(canvas, ctx, true);
 
     window.addEventListener("mousemove", (e) => {
         chessboard.mouseMoveEvent(e);
@@ -13,6 +13,10 @@ function init() {
 
     window.addEventListener("mousedown", (e) => {
         chessboard.mouseClickEvent(e);
+
+        chessboard.movePiece(chessboard.pieceAt('a7'),'a1');
+
+        chessboard.drawBoard();
     });
 
     chessboard.drawBoard();

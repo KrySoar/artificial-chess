@@ -192,8 +192,22 @@ export class Board {
     pieceAt(notation) {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
         let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
-        
+
         return this.#pieces[(y - 1) * 8 + (x - 1)];
+    }
+
+    removeAt(notation) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
+        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+        delete this.#pieces[(y - 1) * 8 + (x - 1)];
+    }
+
+    movePiece(piece, notation) {
+        if(this.pieceAt(notation)) {
+            this.removeAt(notation);
+        }
+
+        piece.setPosition(notation);
     }
 
 }
