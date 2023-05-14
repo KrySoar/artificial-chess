@@ -246,18 +246,46 @@ export class Board {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
         let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
 
+        
         if(this.pieceAt(notation)) {
+            if(this.pieceAt(notation).isWhite != piece.isWhite) {
+                //Eat
+                this.removeAt(notation);
+
+                let oldNotation = piece.notation;
+                this.removeAt(oldNotation);
+
+                piece.setNotationPos(notation);
+                this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
+            } else {
+                piece.setNotationPos(piece.notation);//Cancel the movement
+            }
+        } else {
             this.removeAt(notation);
+
+            let oldNotation = piece.notation;
+            this.removeAt(oldNotation);
+
+            piece.setNotationPos(notation);
+            this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
         }
 
-        let oldNotation = piece.notation;
-        this.removeAt(oldNotation);
-
-        piece.setNotationPos(notation);
-
-       this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
-       
+        if( (this.pieceAt(notation) && this.pieceAt(notation).isWhite != piece.isWhite)
+            || !this.pieceAt(notation)) {
         
+            //Eat
+            this.removeAt(notation);
+
+            let oldNotation = piece.notation;
+            this.removeAt(oldNotation);
+
+            piece.setNotationPos(notation);
+            this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
+        } else {
+            piece.setNotationPos(piece.notation);//Cancel the movement
+        }
+
+       
     }
 
 }
