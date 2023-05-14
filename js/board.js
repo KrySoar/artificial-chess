@@ -102,21 +102,23 @@ export class Board {
 
     importFEN(FEN, tileset) {
         //https://www.chess.com/terms/fen-chess
-        //6 fields separated by spaces
-        //lower are black upper are white
-        //empty is a number 1-8
-        //ranks are separated by slash
-        //3rd field : The letter "k" indicates that kingside castling is available,
-        //      while "q" means that a player may castle queenside. The symbol "-" designates that neither side may castle. 
-        //4th field: square behind the pawn in algebraic notation .If no en passant targets available, the "-" symbol is used.
-        //      Even though no pawns may capture the e4-pawn, the FEN string would still contain the en passant target square e3 in its fourth field.
-        //5th field: Halfmove clock
-        //6th field: Fullmove number
-
         //example starting game FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        const [position, trait, castling,
+        const pieceMap = {
+            'K': King,
+            'Q': Queen,
+            'B': Bishop,
+            'N': Knight,
+            'R': Rook,
+            'P': Pawn,
+        }
+
+        let [position, trait, castling,
             enPassant, halfmoveNb, fullmoveNb] = FEN.split(' ');
+
+            if(!this.#isWhite) {
+                position = position.split('').reverse().join('');
+            }
         
         let x = 1;
         let y = 1;
@@ -129,72 +131,14 @@ export class Board {
                 x += nb;
             }
 
-            switch(char) {
-                case 'r':
-                    this.addPiece(new Rook(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
-                    x++;
-                    break;
-
-                case 'n':
-                    this.addPiece(new Knight(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
-                    x++;
-                    break;
-
-                case 'b':
-                    this.addPiece(new Bishop(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
-                    x++;
-                    break;
-
-                case 'q':
-                    this.addPiece(new Queen(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
-                    x++;
-                    break;
-
-                case 'k':
-                    this.addPiece(new King(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
-                    x++;
-                    break;
-
-                case 'p':
-                    this.addPiece(new Pawn(utils.squareToNotation([x,y], this.#isWhite),false,tileset, this));
-                    x++;
-                    break;
-
-
-                case 'R':
-                    this.addPiece(new Rook(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
-                    x++;
-                    break;
-
-                case 'N':
-                    this.addPiece(new Knight(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
-                    x++;
-                    break;
-
-                case 'B':
-                    this.addPiece(new Bishop(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
-                    x++;
-                    break;
-
-                case 'Q':
-                    this.addPiece(new Queen(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
-                    x++;
-                    break;
-
-                case 'K':
-                    this.addPiece(new King(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
-                    x++;
-                    break;
-
-                case 'P':
-                    this.addPiece(new Pawn(utils.squareToNotation([x,y], this.#isWhite),true,tileset, this));
-                    x++;
-                    break;
-                
-                case '/':
-                    y++;
-                    x = 1;
-                    break;
+            if(['K', 'Q', 'B', 'N', 'R', 'P', 'k', 'q', 'b', 'n', 'r', 'p'].includes(char)) {
+                this.addPiece( new pieceMap[char.toUpperCase()](
+                    utils.squareToNotation([x,y], this.#isWhite),(char==char.toUpperCase()),tileset, this)
+                );
+                x++;
+            } else if(char == '/') {
+                y++;
+                x = 1;
             }
             //console.log(position[i]);
             //console.log(utils.squareToNotation([x,y], this.#isWhite));

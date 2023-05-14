@@ -29,10 +29,7 @@ function init() {
 
 
     piecesImg.src = "../assets/imgs/chesspieces.png";
-    
 
-
-    
 }
 
 window.onload = init();
