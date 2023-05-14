@@ -6,6 +6,9 @@ export class Piece {
     _isWhite;
     _board;
 
+    _posX;
+    _posY;
+
     _name;
 
     _tileset
@@ -17,7 +20,11 @@ export class Piece {
 
 
     constructor(notationPos, isWhite, tileset, board) {
+        let squareSize = board.canvas.width / 8;
+
         this._notationPos = notationPos;
+        [this._posX, this._posY] = utils.notationToCoords(squareSize, notationPos, board.isWhite);
+
         this._isWhite = isWhite;
         this._board = board;
         this._tileY = !this._isWhite;
@@ -29,17 +36,25 @@ export class Piece {
     draw(canvas, ctx) {
         let squareSize = canvas.width / 8;
 
-        let [posX, posY] =  utils.notationToCoords(squareSize, this._notationPos, this._board.isWhite);
-
         //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
         ctx.drawImage(this._tileset, this._tileX*this._tileSquareSize,
                         this._tileY*this._tileSquareSize,
                         this._tileSquareSize, this._tileSquareSize,
-                        posX, posY, squareSize, squareSize );
+                        this._posX, this._posY, squareSize, squareSize );
     }
 
-    setPosition(notation) {
+    setNotationPos(notation) {
+        let squareSize = this._board.canvas.width / 8;
+
         this._notationPos = notation;
+        let [posX, posY] =  utils.notationToCoords(squareSize, this._notationPos, this._board.isWhite);
+
+        this.setPosition([posX, posY]);
+    }
+
+    setPosition([posX, posY]) {
+        this._posX = posX;
+        this._posY = posY;
     }
 
     get isWhite() {

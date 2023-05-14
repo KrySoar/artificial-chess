@@ -2,7 +2,7 @@
     display: inline-flex;
     border: 10px solid #a0661a;
     aspect-ratio: 1/1;
-    width: 40%;
+    /* width: 40%; */
 }
 
 #board {

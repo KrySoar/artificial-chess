@@ -6,6 +6,7 @@ export class Board {
     #ctx;
     #isWhite;
     #pieces;
+    draggedPiece;
     
 
     constructor(canvas, ctx, isWhite = true) {
@@ -21,6 +22,10 @@ export class Board {
         return this.#isWhite;
     }
 
+    get canvas() {
+        return this.#canvas;
+    }
+
     // addPiece(piece)
     // {
     //     if(this.#pieces.length >= 64) {
@@ -29,7 +34,7 @@ export class Board {
     //     this.#pieces.push(piece)
     // }
 
-    drawSquare([posX, posY], isColored = false) {
+    #drawSquare([posX, posY], isColored = false) {
         let squareSize = this.#canvas.width / 8;
         this.#ctx.fillStyle = isColored ? "#593300" : "#ffc67a"
         this.#ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.#canvas.width / 8, this.#canvas.height / 8);
@@ -41,7 +46,7 @@ export class Board {
         {
             for(let x = 1; x <= 8; x++)
             {
-                this.drawSquare([x,y], ((x+y)%2 == 1));
+                this.#drawSquare([x,y], ((x+y)%2 == 1));
             }
         }
 
@@ -77,12 +82,19 @@ export class Board {
         if(this.#posIsOver([posX, posY]))
         {
             this.#hovering( utils.posToSquare(squareSize,[posX,posY]) );
+
+            if(this.draggedPiece) {
+                this.draggedPiece.setPosition([posX - squareSize/2, posY - squareSize/2]);
+                this.draggedPiece.draw(this.#canvas, this.#ctx);
+            }
+
         } else {
+
             this.drawBoard();
-        }
+        }        
     }
 
-    mouseClickEvent(e) {
+    mouseDownEvent(e) {
         let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
 
@@ -94,6 +106,34 @@ export class Board {
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
             console.log(caseClicked);
             console.log(this.pieceAt(caseClicked));
+
+            this.draggedPiece = this.pieceAt(caseClicked);
+        }
+    }
+
+    mouseUpEvent(e) {
+        let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
+
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
+    
+        //If the mouse is over the board
+        if(this.#posIsOver([posX, posY]))
+        {
+            let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
+            // console.log(caseReleased);
+            // console.log(this.pieceAt(caseReleased));
+
+            //this.pieceAt(caseReleased).setPosition([posX, posY]);
+
+
+            // console.log(caseReleased);
+            // this.draggedPiece.setNotationPos(caseReleased);
+            // console.log(this.toString());
+            // console.log(this.#pieces);
+            this.movePiece(this.draggedPiece, caseReleased);
+
+            delete this.draggedPiece;
         }
     }
 
@@ -207,7 +247,7 @@ export class Board {
             this.removeAt(notation);
         }
 
-        piece.setPosition(notation);
+        piece.setNotationPos(notation);
     }
 
 }
