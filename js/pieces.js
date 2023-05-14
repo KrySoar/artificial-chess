@@ -38,6 +38,10 @@ export class Piece {
                         posX, posY, squareSize, squareSize );
     }
 
+    get isWhite() {
+        return this._isWhite;
+    }
+
 }
 
 export class King extends Piece {

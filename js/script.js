@@ -13,6 +13,7 @@ function init() {
 
     window.addEventListener("mousedown", (e) => {
         chessboard.mouseClickEvent(e);
+        console.log(chessboard.toString());
     });
 
     chessboard.drawBoard();

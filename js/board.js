@@ -132,18 +132,56 @@ export class Board {
             }
 
             if(['K', 'Q', 'B', 'N', 'R', 'P', 'k', 'q', 'b', 'n', 'r', 'p'].includes(char)) {
-                this.addPiece( new pieceMap[char.toUpperCase()](
+                // this.addPiece( new pieceMap[char.toUpperCase()](
+                //     utils.squareToNotation([x,y], this.#isWhite),(char==char.toUpperCase()),tileset, this)
+                // );
+                this.#pieces[(y-1) * 8 + (x-1)] = new pieceMap[char.toUpperCase()](
                     utils.squareToNotation([x,y], this.#isWhite),(char==char.toUpperCase()),tileset, this)
-                );
                 x++;
             } else if(char == '/') {
                 y++;
                 x = 1;
             }
-            //console.log(position[i]);
-            //console.log(utils.squareToNotation([x,y], this.#isWhite));
         }
 
+    }
+
+    toString() {
+
+        let str = "";
+
+        const pieceMap = {
+            "Piece": 'P',
+            "King": 'K',
+            "Queen": 'Q',
+            "Bishop": 'B',
+            "Knight": 'N',
+            "Rook": 'R',
+            "Pawn": 'P',
+        };
+        
+
+        for(let i = 0; i < this.#pieces.length; i++)
+        {
+            let piece = this.#pieces[i];
+            let colorChar = '';
+            let pieceString = "";
+            
+            if(piece) {
+                colorChar = piece.isWhite ? 'w' : 'b';
+                pieceString = colorChar + pieceMap[piece.constructor.name];
+            } else {
+                pieceString = "  ";
+            }
+
+            str += `[${pieceString}]`;
+
+            if((i+1)%8 == 0) {
+                str += '\n';
+            }
+        }
+
+        return str;
     }
 
     // exportFEN() {
