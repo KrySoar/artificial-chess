@@ -21,13 +21,13 @@ export class Board {
         return this.#isWhite;
     }
 
-    addPiece(piece)
-    {
-        if(this.#pieces.length >= 64) {
-            throw new Error("Board is full !");
-        }
-        this.#pieces.push(piece)
-    }
+    // addPiece(piece)
+    // {
+    //     if(this.#pieces.length >= 64) {
+    //         throw new Error("Board is full !");
+    //     }
+    //     this.#pieces.push(piece)
+    // }
 
     drawSquare([posX, posY], isColored = false) {
         let squareSize = this.#canvas.width / 8;
@@ -91,7 +91,9 @@ export class Board {
         //If the mouse is over the board
         if(this.#posIsOver([posX, posY]))
         {
-            alert(utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite));
+            let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
+            console.log(caseClicked);
+            console.log(this.pieceAt(caseClicked));
         }
     }
 
@@ -132,9 +134,6 @@ export class Board {
             }
 
             if(['K', 'Q', 'B', 'N', 'R', 'P', 'k', 'q', 'b', 'n', 'r', 'p'].includes(char)) {
-                // this.addPiece( new pieceMap[char.toUpperCase()](
-                //     utils.squareToNotation([x,y], this.#isWhite),(char==char.toUpperCase()),tileset, this)
-                // );
                 this.#pieces[(y-1) * 8 + (x-1)] = new pieceMap[char.toUpperCase()](
                     utils.squareToNotation([x,y], this.#isWhite),(char==char.toUpperCase()),tileset, this)
                 x++;
@@ -145,6 +144,12 @@ export class Board {
         }
 
     }
+
+    // exportFEN() {
+    //     let FEN;
+
+    //     return FEN
+    // }
 
     toString() {
 
@@ -169,7 +174,7 @@ export class Board {
             
             if(piece) {
                 colorChar = piece.isWhite ? 'w' : 'b';
-                pieceString = colorChar + pieceMap[piece.constructor.name];
+                pieceString = colorChar + pieceMap[piece.name];
             } else {
                 pieceString = "  ";
             }
@@ -184,9 +189,11 @@ export class Board {
         return str;
     }
 
-    // exportFEN() {
-    //     let FEN;
+    pieceAt(notation) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
+        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+        
+        return this.#pieces[(y - 1) * 8 + (x - 1)];
+    }
 
-    //     return FEN
-    // }
 }

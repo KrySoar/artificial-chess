@@ -5,6 +5,8 @@ export class Piece {
     _notationPos;
     _isWhite;
     _board;
+
+    _name;
     // _posX;
     // _posY;
 
@@ -24,6 +26,7 @@ export class Piece {
         this._isWhite = isWhite;
         this._board = board;
         this._tileY = !this._isWhite;
+        this._name = this.constructor.name
 
         this._tileset = tileset;
     }
@@ -34,12 +37,18 @@ export class Piece {
         let [posX, posY] =  utils.notationToCoords(squareSize, this._notationPos, this._board.isWhite);
 
         //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-        ctx.drawImage(this._tileset, this._tileX*this._tileSquareSize, this._tileY*this._tileSquareSize, this._tileSquareSize, this._tileSquareSize,
+        ctx.drawImage(this._tileset, this._tileX*this._tileSquareSize,
+                        this._tileY*this._tileSquareSize,
+                        this._tileSquareSize, this._tileSquareSize,
                         posX, posY, squareSize, squareSize );
     }
 
     get isWhite() {
         return this._isWhite;
+    }
+
+    get name() {
+        return this._name;
     }
 
 }
