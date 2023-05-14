@@ -7,11 +7,6 @@ export class Piece {
     _board;
 
     _name;
-    // _posX;
-    // _posY;
-
-    // _squareX;
-    // _squareY;
 
     _tileset
     _tileSquareSize = 200;
@@ -41,6 +36,10 @@ export class Piece {
                         this._tileY*this._tileSquareSize,
                         this._tileSquareSize, this._tileSquareSize,
                         posX, posY, squareSize, squareSize );
+    }
+
+    setPosition(notation) {
+        this._notationPos = notation;
     }
 
     get isWhite() {

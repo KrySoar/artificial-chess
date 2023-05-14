@@ -24,6 +24,7 @@ function init() {
         //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         let FEN = "r2qk1nr/ppp2ppp/2np4/4p2b/2B1P3/2NPPN1P/PPP3P1/R2QK2R b KQkq - 0 8"
         chessboard.importFEN(FEN, piecesImg);
+        chessboard.drawBoard();
         
     }, false);
 
