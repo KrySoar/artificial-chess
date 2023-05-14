@@ -129,11 +129,11 @@ export class Board {
 
             // console.log(caseReleased);
             // this.draggedPiece.setNotationPos(caseReleased);
-            // console.log(this.toString());
-            // console.log(this.#pieces);
             this.movePiece(this.draggedPiece, caseReleased);
-
             delete this.draggedPiece;
+
+            console.log(this.toString());
+            console.log(this.#pieces);
         }
     }
 
@@ -243,11 +243,21 @@ export class Board {
     }
 
     movePiece(piece, notation) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
+        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+
         if(this.pieceAt(notation)) {
             this.removeAt(notation);
         }
 
+        let oldNotation = piece.notation;
+        this.removeAt(oldNotation);
+
         piece.setNotationPos(notation);
+
+       this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
+       
+        
     }
 
 }

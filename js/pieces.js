@@ -65,6 +65,10 @@ export class Piece {
         return this._name;
     }
 
+    get notation() {
+        return this._notationPos;
+    }
+
 }
 
 export class King extends Piece {
