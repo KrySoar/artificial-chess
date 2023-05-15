@@ -108,7 +108,6 @@ export class Board {
             }
 
         } else {
-
             this.drawBoard();
         }        
     }
@@ -118,16 +117,19 @@ export class Board {
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
 
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
-    
+
+        //Right-click
+        if(e.button == 2 && this.draggedPiece){
+            this.cancelMove();
+        }
         //If the mouse is over the board
         if(this.#posIsOver([posX, posY]))
         {
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
-            console.log(caseClicked);
-            console.log(this.pieceAt(caseClicked));
-
             this.draggedPiece = this.pieceAt(caseClicked);
         }
+
+
     }
 
     mouseUpEvent(e) {
@@ -140,19 +142,16 @@ export class Board {
         if(this.#posIsOver([posX, posY]))
         {
             let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
-            // console.log(caseReleased);
-            // console.log(this.pieceAt(caseReleased));
 
-            //this.pieceAt(caseReleased).setPosition([posX, posY]);
-
-
-            // console.log(caseReleased);
-            // this.draggedPiece.setNotationPos(caseReleased);
             this.movePiece(this.draggedPiece, caseReleased);
             delete this.draggedPiece;
 
             console.log(this.toString());
             console.log(this.#pieces);
+
+            this.drawBoard();
+        } else {
+            this.cancelMove();
         }
     }
 
@@ -279,10 +278,18 @@ export class Board {
 
             piece._hasMoved = true;
         } else {
-            piece.setNotationPos(piece.notation);//Cancel the movement
+            this.cancelMove();
         }
 
        
+    }
+
+    cancelMove() {
+        if(this.draggedPiece) {
+            this.draggedPiece.setNotationPos(this.draggedPiece.notation);
+            delete this.draggedPiece;
+            this.drawBoard();
+        }
     }
 
 }
