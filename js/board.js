@@ -7,6 +7,7 @@ export class Board {
     #isWhite;
     #pieces;
     draggedPiece;
+    possibleMoves;
     
 
     constructor(canvas, ctx, isWhite = true) {
@@ -52,7 +53,13 @@ export class Board {
         }
 
         //In-between
-        //this.highlightIndex(16, "green");
+        if(this.possibleMoves) {
+            console.log('ok1');
+            for(let i = 0; i < this.possibleMoves.length; i++) {
+                this.highlightIndex(this.possibleMoves[i], "rgba(0, 100, 200, 0.7)");
+                console.log('ok2');
+            }
+        }
 
         //Pieces
         for(let i = 0;i < this.#pieces.length; i++) {
@@ -79,8 +86,8 @@ export class Board {
     
     highlightSquare([squareX, squareY], color) {
         this.#ctx.fillStyle = color;
-        let pos = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
-        this.#ctx.fillRect(pos[0], pos[1], this.#canvas.width / 8, this.#canvas.height / 8);
+        let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
+        this.#ctx.fillRect(posX, posY, this.#canvas.width / 8, this.#canvas.height / 8);
     }
 
     mouseMoveEvent(e) {
@@ -107,6 +114,8 @@ export class Board {
                 this.draggedPiece.draw(this.#canvas, this.#ctx);
             }
 
+            
+
         } else {
             this.drawBoard();
         }        
@@ -125,9 +134,28 @@ export class Board {
         //If the mouse is over the board
         if(this.#posIsOver([posX, posY]))
         {
+
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
+
+
+            ///// DEBUG /////////////////:
+            let legalMoves = this.pieceAt(caseClicked).legalMoves
+            let pieceIndex = utils.indexFromSquare(
+                                utils.posToSquare(squareSize,utils.notationToCoords(
+                                    squareSize,caseClicked,this.#isWhite),this.#isWhite),this.#isWhite);
+
+            this.possibleMoves = new Array();
+            for(let i = 0; i < legalMoves.length; i++) {
+                this.possibleMoves.push(pieceIndex + legalMoves[i]);
+                console.log(this.possibleMoves);
+            }
+
+            //////////////////
+
+            this.drawBoard();
         }
+
 
 
     }
@@ -146,8 +174,8 @@ export class Board {
             this.movePiece(this.draggedPiece, caseReleased);
             delete this.draggedPiece;
 
-            console.log(this.toString());
-            console.log(this.#pieces);
+            // console.log(this.toString());
+            // console.log(this.#pieces);
 
             this.drawBoard();
         } else {

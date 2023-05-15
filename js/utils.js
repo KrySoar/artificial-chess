@@ -58,3 +58,14 @@ export function squareToNotation([squareX, squareY], isWhite) {
 // export function notationToSquare(notation, isWhite) {
 
 // }
+
+export function indexFromSquare([squareX, squareY], isWhite) {
+
+    let index = (squareY - 1) * 8 + (squareX);
+
+    if(!isWhite) {
+        index = 65 - index; 
+    }
+
+    return index;
+}

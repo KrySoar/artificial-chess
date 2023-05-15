@@ -115,6 +115,12 @@ export class Knight extends Piece {
         super(notationPos, isWhite, tileset, board);
     }
 
+    get legalMoves() {
+        console.log(this._notationPos);
+        console.log(this._posX, this._posY);
+        return this._defMoves;
+    }
+
 }
 
 export class Rook extends Piece {
