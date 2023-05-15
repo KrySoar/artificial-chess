@@ -54,10 +54,8 @@ export class Board {
 
         //In-between
         if(this.possibleMoves) {
-            console.log('ok1');
             for(let i = 0; i < this.possibleMoves.length; i++) {
                 this.highlightIndex(this.possibleMoves[i], "rgba(0, 100, 200, 0.7)");
-                console.log('ok2');
             }
         }
 
@@ -147,8 +145,9 @@ export class Board {
 
             this.possibleMoves = new Array();
             for(let i = 0; i < legalMoves.length; i++) {
-                this.possibleMoves.push(pieceIndex + legalMoves[i]);
-                console.log(this.possibleMoves);
+                let pMove = pieceIndex + legalMoves[i];
+                this.possibleMoves.push(pMove);
+                //console.log(utils.squareFromIndex(3,this.#isWhite));
             }
 
             //////////////////

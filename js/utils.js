@@ -69,3 +69,20 @@ export function indexFromSquare([squareX, squareY], isWhite) {
 
     return index;
 }
+
+export function squareFromIndex(index, isWhite) {
+
+    if(!isWhite) {
+        index = 65 - index; 
+    }
+
+    let squareX = index%8;
+    let squareY = Math.floor(index/8) +1;
+
+    if (squareX ==  0) {
+        squareX = 8;
+        squareY -= 1;
+    }
+
+    return [squareX, squareY];
+}
