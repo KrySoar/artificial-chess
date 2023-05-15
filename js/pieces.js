@@ -11,6 +11,8 @@ export class Piece {
 
     _name;
 
+    _defLegalMoves = [];
+
     _tileset
     _tileSquareSize = 200;
     _tileX;
@@ -73,6 +75,7 @@ export class Piece {
 
 export class King extends Piece {
     _tileX = 0;
+    _defLegalMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -82,6 +85,7 @@ export class King extends Piece {
 
 export class Queen extends Piece {
     _tileX = 1;
+    _defLegalMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -91,6 +95,7 @@ export class Queen extends Piece {
 
 export class Bishop extends Piece {
     _tileX = 2;
+    _defLegalMoves = [-9, -7, 7, 9];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -109,6 +114,7 @@ export class Knight extends Piece {
 
 export class Rook extends Piece {
     _tileX = 4;
+    _defLegalMoves = [-8, -1, 1, 8];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -118,6 +124,7 @@ export class Rook extends Piece {
 
 export class Pawn extends Piece {
     _tileX = 5;
+    _defLegalMoves = [-8, -16];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
