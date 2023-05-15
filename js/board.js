@@ -42,6 +42,7 @@ export class Board {
     
     drawBoard() {
 
+        //Squares
         for(let y = 1; y <= 8; y++)
         {
             for(let x = 1; x <= 8; x++)
@@ -50,17 +51,34 @@ export class Board {
             }
         }
 
+        //In-between
+        //this.highlightIndex(16, "green");
+
+        //Pieces
         for(let i = 0;i < this.#pieces.length; i++) {
             
             if(this.#pieces[i] != null && this.#pieces[i] instanceof Piece) {
                 this.#pieces[i].draw(this.#canvas, this.#ctx);
             }
         }
+
+        
+    }
+
+    highlightIndex(index, color) {
+        let x = index%8;
+        let y = Math.floor(index/8) +1;
+
+        if (x ==  0) {
+            x = 8;
+            y -= 1;
+        }
+
+        this.highlightSquare([x, y], color);
     }
     
-    #hovering([squareX, squareY]) {
-        this.drawBoard();
-        this.#ctx.fillStyle = "rgba(150, 200, 255, 0.5)";
+    highlightSquare([squareX, squareY], color) {
+        this.#ctx.fillStyle = color;
         let pos = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
         this.#ctx.fillRect(pos[0], pos[1], this.#canvas.width / 8, this.#canvas.height / 8);
     }
@@ -81,7 +99,8 @@ export class Board {
         //If the mouse is over the board
         if(this.#posIsOver([posX, posY]))
         {
-            this.#hovering( utils.posToSquare(squareSize,[posX,posY]) );
+            this.drawBoard();
+            //this.highlightSquare( utils.posToSquare(squareSize,[posX,posY]), "rgba(150, 200, 255, 0.5)");
 
             if(this.draggedPiece) {
                 this.draggedPiece.setPosition([posX - squareSize/2, posY - squareSize/2]);
