@@ -48,7 +48,9 @@ export class Board {
         if(this.possibleMoves) {
             for(let i = 0; i < this.possibleMoves.length; i++) {
                 let [squareX, squareY] = this.possibleMoves[i];
-                this.highlightSquare([squareX, squareY], "rgba(0, 100, 200, 0.7)");
+                //let color = "rgba(0, 100, 200, 0.3)";
+                let color = "rgba(0, 255, 255, 0.3)";
+                this.highlightSquare([squareX, squareY], color);
             }
         }
 
@@ -88,8 +90,6 @@ export class Board {
         //real square size
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
-        console.log([this.#canvas.getBoundingClientRect()]);
-    
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
         //if(true)
@@ -128,7 +128,7 @@ export class Board {
             this.draggedPiece = this.pieceAt(caseClicked);
 
 
-            ///// DEBUG /////////////////:
+            ///// DEBUG /////////////////
             let legalMoves = this.pieceAt(caseClicked).legalMoves
 
             let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
@@ -145,9 +145,7 @@ export class Board {
 
                 let pMove = [squareX + moveX, squareY + moveY] ;
                 this.possibleMoves.push(pMove);
-                //console.log(utils.squareFromIndex(3,this.#isWhite));
             }
-
             //////////////////
 
             this.drawBoard();

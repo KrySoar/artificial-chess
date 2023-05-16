@@ -360,21 +360,36 @@ export class Pawn extends Piece {
     }
 
     get legalMoves() {
-        let lMoves = [...this._defMoves];
+        let lMoves = new Array();
 
-        // let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
-        // let pieceIndex = utils.indexFromSquare(
-        //     utils.posToSquare(squareSize,utils.notationToCoords(
-        //         squareSize,this._notationPos,this._board.isWhite),this._board.isWhite),this._board.isWhite);
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
-        // if(!this._hasMoved) {
-        //     lMoves.push(-16);
-        // }
+        if(!this._hasMoved) {
+            lMoves.push([0, -1]);
+            lMoves.push([0, -2]);
+            //TODO en passant
+        }
+        
+        //TODO c'est la vérif qui dépends de la couleur vvvvvvvvvvvvvvvvv
+        let pieceA = this._board.pieceAtSquare([pSquareX - 1, pSquareY - 1]);
+        if(pieceA && pieceA.isWhite != this._isWhite)
+        {
+            lMoves.push([-1, -1]);
+        }
 
-        // if(this._board.pieceAt(-9) && this._board.pieceAt(-9).isWhite != this._isWhite) 
-        // {
-        //     lMoves.push(-9);
-        // }
+        let pieceB = this._board.pieceAtSquare([pSquareX, pSquareY - 1]);
+        if(!pieceB)
+        {
+            lMoves.push([0, -1]);
+        }
+
+        let pieceC = this._board.pieceAtSquare([pSquareX + 1, pSquareY - 1]);
+        if(pieceC && pieceC.isWhite != this._isWhite)
+        {
+            lMoves.push([1, -1]);
+        }
 
         return lMoves;
     }
