@@ -96,14 +96,10 @@ export class Board {
         //real square size
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
-        let [squareX, squareY] = utils.posToSquare(squareSize, [posX, posY]);
-    
-        let coordsText = "squareX: " + squareX + ", squareY: " + squareY;
-    
-        document.getElementById("position").innerHTML = coordsText;
     
         //If the mouse is over the board
-        if(this.#posIsOver([posX, posY]))
+        //if(this.#posIsOver([posX, posY]))
+        if(true)
         {
             this.drawBoard();
             //this.highlightSquare( utils.posToSquare(squareSize,[posX,posY]), "rgba(150, 200, 255, 0.5)");
@@ -131,7 +127,8 @@ export class Board {
             this.cancelMove();
         }
         //If the mouse is over the board
-        if(this.#posIsOver([posX, posY]))
+        //if(this.#posIsOver([posX, posY]))
+        if(true)
         {
 
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
@@ -174,7 +171,8 @@ export class Board {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
         //If the mouse is over the board
-        if(this.#posIsOver([posX, posY]))
+        //if(this.#posIsOver([posX, posY]))
+        if(true)
         {
             let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
 
