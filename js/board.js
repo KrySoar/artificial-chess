@@ -139,13 +139,19 @@ export class Board {
 
             ///// DEBUG /////////////////:
             let legalMoves = this.pieceAt(caseClicked).legalMoves
+
             let pieceIndex = utils.indexFromSquare(
                                 utils.posToSquare(squareSize,utils.notationToCoords(
                                     squareSize,caseClicked,this.#isWhite),this.#isWhite),this.#isWhite);
 
             this.possibleMoves = new Array();
             for(let i = 0; i < legalMoves.length; i++) {
-                let pMove = pieceIndex + legalMoves[i];
+                let legalMove = legalMoves[i];
+                if(!this.pieceAt(caseClicked).isWhite) {
+                    legalMove = -legalMove;
+                }
+
+                let pMove = pieceIndex + legalMove ;
                 this.possibleMoves.push(pMove);
                 //console.log(utils.squareFromIndex(3,this.#isWhite));
             }

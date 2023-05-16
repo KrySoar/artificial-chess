@@ -135,10 +135,30 @@ export class Rook extends Piece {
 
 export class Pawn extends Piece {
     _tileX = 5;
-    _defMoves = [-8, -16];
+    _defMoves = [-8];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
+    }
+
+    get legalMoves() {
+        let lMoves = [...this._defMoves];
+
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let pieceIndex = utils.indexFromSquare(
+            utils.posToSquare(squareSize,utils.notationToCoords(
+                squareSize,this._notationPos,this._board.isWhite),this._board.isWhite),this._board.isWhite);
+
+        if(!this._hasMoved) {
+            lMoves.push(-16);
+        }
+
+        if(this._board.pieceAt(-9) && this._board.pieceAt(-9).isWhite != this._isWhite) 
+        {
+            lMoves.push(-9);
+        }
+
+        return lMoves;
     }
 
 }
