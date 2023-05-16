@@ -137,16 +137,16 @@ export class Knight extends Piece {
 
     get legalMoves() {
         let lMoves = new Array();
-        for(let i = 0; i < this._defMoves.length; i++) {
-            let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
-            let [moveX, moveY] = this._defMoves[i];
-            let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-                squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
+        for(const [moveX, moveY] of this._defMoves) {
+            
             let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
             let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
 
-            lMoves.push(this._defMoves[i]);
+            lMoves.push([moveX, moveY]);
 
             if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
                 if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
@@ -154,6 +154,7 @@ export class Knight extends Piece {
                 }
             }
         }
+
         return lMoves;
     }
 
