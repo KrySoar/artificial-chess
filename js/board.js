@@ -55,7 +55,8 @@ export class Board {
         //In-between
         if(this.possibleMoves) {
             for(let i = 0; i < this.possibleMoves.length; i++) {
-                this.highlightIndex(this.possibleMoves[i], "rgba(0, 100, 200, 0.7)");
+                let [squareX, squareY] = this.possibleMoves[i];
+                this.highlightSquare([squareX, squareY], "rgba(0, 100, 200, 0.7)");
             }
         }
 
@@ -140,18 +141,19 @@ export class Board {
             ///// DEBUG /////////////////:
             let legalMoves = this.pieceAt(caseClicked).legalMoves
 
-            let pieceIndex = utils.indexFromSquare(
-                                utils.posToSquare(squareSize,utils.notationToCoords(
-                                    squareSize,caseClicked,this.#isWhite),this.#isWhite),this.#isWhite);
+            let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+                                    squareSize,caseClicked,this.#isWhite),this.#isWhite);
 
             this.possibleMoves = new Array();
             for(let i = 0; i < legalMoves.length; i++) {
-                let legalMove = legalMoves[i];
+                let [moveX, moveY] = legalMoves[i];
+
                 if(!this.pieceAt(caseClicked).isWhite) {
-                    legalMove = -legalMove;
+                    moveX = -moveX;
+                    moveY = -moveY;
                 }
 
-                let pMove = pieceIndex + legalMove ;
+                let pMove = [squareX + moveX, squareY + moveY] ;
                 this.possibleMoves.push(pMove);
                 //console.log(utils.squareFromIndex(3,this.#isWhite));
             }
@@ -285,6 +287,10 @@ export class Board {
         let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
 
         return this.#pieces[(y - 1) * 8 + (x - 1)];
+    }
+
+    pieceAtSquare([squareX, squareY]) {
+        return this.#pieces[(squareY - 1) * 8 + (squareX - 1)];
     }
 
     removeAt(notation) {

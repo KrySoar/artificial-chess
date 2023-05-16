@@ -79,7 +79,12 @@ export class Piece {
 
 export class King extends Piece {
     _tileX = 0;
-    _defMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
+    //_defMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
+    _defMoves = [
+        [-1,-1], [0, -1], [1, -1],
+        [-1,0],            [1, 0],
+        [-1, 1], [0,  1], [1,  1],
+    ];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -89,7 +94,12 @@ export class King extends Piece {
 
 export class Queen extends Piece {
     _tileX = 1;
-    _defMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
+    //_defMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
+    _defMoves = [
+        [-1,-1], [0, -1], [1, -1],
+        [-1,0],            [1, 0],
+        [-1, 1], [0,  1], [1,  1],
+    ];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -99,7 +109,11 @@ export class Queen extends Piece {
 
 export class Bishop extends Piece {
     _tileX = 2;
-    _defMoves = [-9, -7, 7, 9];
+    //_defMoves = [-9, -7, 7, 9];
+    _defMoves = [
+        [-1,-1], [1, -1],
+        [-1, 1], [1,  1],
+    ];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -109,23 +123,49 @@ export class Bishop extends Piece {
 
 export class Knight extends Piece {
     _tileX = 3;
-    _defMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
+    //_defMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
+    _defMoves = [
+        [-1,-2], [1,-2],
+        [-2,-1], [2,-1],
+        [-2, 1], [2, 1],
+        [-1, 2], [1, 2]
+    ];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
     }
 
     get legalMoves() {
-        console.log(this._notationPos);
-        console.log(this._posX, this._posY);
-        return this._defMoves;
+        let lMoves = new Array();
+        for(let i = 0; i < this._defMoves.length; i++) {
+            let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+            let [moveX, moveY] = this._defMoves[i];
+            let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+                squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+
+            let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
+            let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
+
+            lMoves.push(this._defMoves[i]);
+
+            if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
+                if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
+                      lMoves.pop();  
+                }
+            }
+        }
+        return lMoves;
     }
 
 }
 
 export class Rook extends Piece {
     _tileX = 4;
-    _defMoves = [-8, -1, 1, 8];
+    //_defMoves = [-8, -1, 1, 8];
+    _defMoves = [
+        [0, -1],[-1,0],
+        [1, 0], [0,  1]
+    ];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -135,7 +175,10 @@ export class Rook extends Piece {
 
 export class Pawn extends Piece {
     _tileX = 5;
-    _defMoves = [-8];
+    //_defMoves = [-8];
+    _defMoves = [
+        [0,-1], 
+    ];
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -144,19 +187,19 @@ export class Pawn extends Piece {
     get legalMoves() {
         let lMoves = [...this._defMoves];
 
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
-        let pieceIndex = utils.indexFromSquare(
-            utils.posToSquare(squareSize,utils.notationToCoords(
-                squareSize,this._notationPos,this._board.isWhite),this._board.isWhite),this._board.isWhite);
+        // let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        // let pieceIndex = utils.indexFromSquare(
+        //     utils.posToSquare(squareSize,utils.notationToCoords(
+        //         squareSize,this._notationPos,this._board.isWhite),this._board.isWhite),this._board.isWhite);
 
-        if(!this._hasMoved) {
-            lMoves.push(-16);
-        }
+        // if(!this._hasMoved) {
+        //     lMoves.push(-16);
+        // }
 
-        if(this._board.pieceAt(-9) && this._board.pieceAt(-9).isWhite != this._isWhite) 
-        {
-            lMoves.push(-9);
-        }
+        // if(this._board.pieceAt(-9) && this._board.pieceAt(-9).isWhite != this._isWhite) 
+        // {
+        //     lMoves.push(-9);
+        // }
 
         return lMoves;
     }
