@@ -10,21 +10,22 @@ body {
     display: flex;
     align-items: center;
     background-color: #222222;
-    height: 70px;
+    height: 60px;
     box-shadow: 0px 1px 20px rgb(93, 93, 93);
 }
 
 #navbar > a {
     color: white;
     text-decoration: none;
-    margin-left: 50px;
-    display: none;
+    margin-right: 50px;
 }
 
 #logo {
     display: flex;
     align-items: center;
-    padding-left: 15px;
+    padding: 0 15px;
+    height: 60px;
+    user-select: none;
     
 }
 
@@ -36,14 +37,15 @@ body {
 #logo > div {
     display: inline;
     color:White;
-    font-size: 2em;
+    font-size: 1.5em;
     letter-spacing: 0.5px;
     font-weight: bold;
-    padding: 13px;
+    padding-left: 15px;
+
 }
 
 #logo > img {
-    width: 50px;
+    width: 40px;
     border-radius: 10px;
     color: white;
     box-shadow: 0px 0px 1px white;
@@ -55,14 +57,14 @@ body {
 }
 
 #board-container {
-    margin-top: 5%;
+    margin-top: 2%;
     display: inline-flex;
     border: 10px solid #a0661a;
     border-radius: 5px;
+    box-shadow: 0px 0px 20px rgb(200, 200, 200);
     
 }
 
 #board {
     width: 100%;
-    
 }

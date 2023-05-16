@@ -91,7 +91,7 @@ export class Board {
         console.log([this.#canvas.getBoundingClientRect()]);
     
         //If the mouse is over the board
-        if(this.#posIsOver([posX, posY]))
+        if(this.#posIsOver([e.clientX, e.clientY]))
         //if(true)
         {
             this.drawBoard();
@@ -120,7 +120,7 @@ export class Board {
             this.cancelMove();
         }
         //If the mouse is over the board
-        if(this.#posIsOver([posX, posY]))
+        if(this.#posIsOver([e.clientX, e.clientY]))
         //if(true)
         {
 
@@ -164,7 +164,7 @@ export class Board {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
         //If the mouse is over the board
-        if(this.#posIsOver([posX, posY]))
+        if(this.#posIsOver([e.clientX, e.clientY]))
         //if(true)
         {
             let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
