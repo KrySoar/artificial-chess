@@ -105,6 +105,76 @@ export class Queen extends Piece {
         super(notationPos, isWhite, tileset, board);
     }
 
+    get legalMoves() {
+        let lMoves = new Array();
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+
+        
+        for(const [moveX, moveY] of this._defMoves) {
+            for(let i = 0; i <= 7; i++) {
+    
+                let iX = 0;
+                let iY = 0;
+
+                if(moveX == 0 && moveY < 0) {
+                    iY -= i;
+                }
+
+                if(moveX == 0 && moveY > 0) {
+                    iY += i;
+                }
+
+                if(moveX < 0 && moveY == 0) {
+                    iX -= i;
+                }
+
+                if(moveX > 0 && moveY == 0) {
+                    iX += i;
+                }
+
+                if(moveX < 0 && moveY < 0) {
+                    iX -= i;
+                    iY -= i;
+                }
+
+                if(moveX > 0 && moveY < 0) {
+                    iX += i;
+                    iY -= i;
+                }
+
+                if(moveX < 0 && moveY > 0) {
+                    iX -= i;
+                    iY += i;
+                }
+
+                if(moveX > 0 && moveY > 0) {
+                    iX += i;
+                    iY += i;
+                }
+
+
+                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
+                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
+    
+                lMoves.push([moveX+iX, moveY+iY]);
+    
+                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
+                    if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
+                          lMoves.pop();  
+                          i = 8;
+                    } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
+                        i = 7;
+                    }
+                }
+            }
+        }
+        
+
+        return lMoves;
+    }
+
 }
 
 export class Bishop extends Piece {
@@ -224,6 +294,56 @@ export class Rook extends Piece {
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
+    }
+
+    get legalMoves() {
+        let lMoves = new Array();
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+
+        
+        for(const [moveX, moveY] of this._defMoves) {
+            for(let i = 0; i <= 7; i++) {
+    
+                let iX = 0;
+                let iY = 0;
+
+                if(moveX == 0 && moveY < 0) {
+                    iY -= i;
+                }
+
+                if(moveX == 0 && moveY > 0) {
+                    iY += i;
+                }
+
+                if(moveX < 0 && moveY == 0) {
+                    iX -= i;
+                }
+
+                if(moveX > 0 && moveY == 0) {
+                    iX += i;
+                }
+
+
+                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
+                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
+    
+                lMoves.push([moveX+iX, moveY+iY]);
+    
+                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
+                    if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
+                          lMoves.pop();  
+                          i = 8;
+                    } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
+                        i = 7;
+                    }
+                }
+            }
+        }
+        
+
+        return lMoves;
     }
 
 }
