@@ -27,14 +27,6 @@ export class Board {
         return this.#canvas;
     }
 
-    // addPiece(piece)
-    // {
-    //     if(this.#pieces.length >= 64) {
-    //         throw new Error("Board is full !");
-    //     }
-    //     this.#pieces.push(piece)
-    // }
-
     #drawSquare([posX, posY], isColored = false) {
         let squareSize = this.#canvas.width / 8;
         this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a"
@@ -96,10 +88,11 @@ export class Board {
         //real square size
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
+        console.log([this.#canvas.getBoundingClientRect()]);
     
         //If the mouse is over the board
-        //if(this.#posIsOver([posX, posY]))
-        if(true)
+        if(this.#posIsOver([posX, posY]))
+        //if(true)
         {
             this.drawBoard();
             //this.highlightSquare( utils.posToSquare(squareSize,[posX,posY]), "rgba(150, 200, 255, 0.5)");
@@ -127,8 +120,8 @@ export class Board {
             this.cancelMove();
         }
         //If the mouse is over the board
-        //if(this.#posIsOver([posX, posY]))
-        if(true)
+        if(this.#posIsOver([posX, posY]))
+        //if(true)
         {
 
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
@@ -171,8 +164,8 @@ export class Board {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
         //If the mouse is over the board
-        //if(this.#posIsOver([posX, posY]))
-        if(true)
+        if(this.#posIsOver([posX, posY]))
+        //if(true)
         {
             let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
 
