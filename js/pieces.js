@@ -347,12 +347,15 @@ export class Pawn extends Piece {
             squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
         let i = this._isWhite ? 1 : -1;
-
+        if(!this._board.isWhite) {
+            i = -i;
+        }
+        
         if(!this._hasMoved) {
-            
             lMoves.push([0, -i*2]);
             //TODO en passant
         }
+
 
         let pieceA = this._board.pieceAtSquare([pSquareX - i, pSquareY - i]);
         if(pieceA && pieceA.isWhite != this._isWhite)
