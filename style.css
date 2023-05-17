@@ -81,6 +81,7 @@ body {
 @media (max-aspect-ratio: 1/1) {
     #board-container {
         width: 90%;
+        /* margin-top: 70%; */
     }
 }
 
