@@ -335,6 +335,9 @@ export class Pawn extends Piece {
         [0,-1], 
     ];
 
+    _enPassantR = false;
+    _enPassantL = false;
+
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
     }
@@ -350,12 +353,19 @@ export class Pawn extends Piece {
         if(!this._board.isWhite) {
             i = -i;
         }
-        
+
+        //TODO check if row == 7 || 2 instead (FEN Import problems)
         if(!this._hasMoved) {
             lMoves.push([0, -i*2]);
-            //TODO en passant
         }
 
+        if(this._enPassantR) {
+            lMoves.push([i, -i]);
+        }
+
+        if(this._enPassantL) {
+            lMoves.push([-i, -i]);
+        }
 
         let pieceA = this._board.pieceAtSquare([pSquareX - i, pSquareY - i]);
         if(pieceA && pieceA.isWhite != this._isWhite)

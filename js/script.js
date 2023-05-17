@@ -4,7 +4,7 @@ function init() {
     const canvas = document.querySelector("#board");
     const ctx = canvas.getContext("2d");
 
-    const chessboard = new Board(canvas, ctx, false);
+    const chessboard = new Board(canvas, ctx, true);
 
     window.addEventListener("mousemove", (e) => {
         chessboard.mouseMoveEvent(e);
@@ -29,7 +29,8 @@ function init() {
     piecesImg.addEventListener("load", () => {
         //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         let FEN = "r2qk1nr/ppp2ppp/2np4/4p2b/2B1P3/2NPPN1P/PPP3P1/R2QK2R b KQkq - 0 8"
-        chessboard.importFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", piecesImg);
+        //FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        chessboard.importFEN(FEN, piecesImg);
         chessboard.drawBoard();
         
         

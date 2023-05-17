@@ -103,10 +103,13 @@ export class Board {
         if(this.#posIsOver([e.clientX, e.clientY]))
         {
             this.drawBoard();
-            //this.highlightSquare( utils.posToSquare(squareSize,[posX,posY]), "rgba(150, 200, 255, 0.5)");
 
             if(this.draggedPiece) {
-                this.draggedPiece.setPosition([posX - squareSize/2, posY - squareSize/2]);
+
+                let ratio = (this.#canvas.getBoundingClientRect().width / 8) / (this.#canvas.width / 8 );
+                this.draggedPiece.setPosition([(posX / ratio) - (squareSize/ratio)/2,
+                                               (posY / ratio) - (squareSize/ratio)/2]);
+                                               
                 this.draggedPiece.draw(this.#canvas, this.#ctx);
             }
 
