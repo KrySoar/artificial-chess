@@ -37,7 +37,6 @@ export class Piece {
 
     draw(canvas, ctx) {
         let squareSize = canvas.width / 8;
-
         //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
         ctx.drawImage(this._tileset, this._tileX*this._tileSquareSize,
                         this._tileY*this._tileSquareSize,

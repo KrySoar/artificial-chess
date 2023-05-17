@@ -28,7 +28,9 @@ export class Board {
 
     #drawSquare([posX, posY], isColored = false) {
         let squareSize = this.#canvas.width / 8;
+        this.#ctx.fillStyle = isColored ? "black" : "white";
         this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
+        //this.#ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
         this.#ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.#canvas.width / 8, this.#canvas.height / 8);
     }
     
