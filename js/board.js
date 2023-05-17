@@ -64,8 +64,6 @@ export class Board {
                 this.moveCircle([squareX, squareY], color);
             }
         }
-
-        
     }
 
     highlightIndex(index, color) {
@@ -85,8 +83,6 @@ export class Board {
         let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
         this.#ctx.fillRect(posX, posY, this.#canvas.width / 8, this.#canvas.height / 8);
     }
-    
-    
 
     moveCircle([squareX, squareY], color) {
         this.#ctx.fillStyle = color;
@@ -106,7 +102,6 @@ export class Board {
     
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
-        //if(true)
         {
             this.drawBoard();
             //this.highlightSquare( utils.posToSquare(squareSize,[posX,posY]), "rgba(150, 200, 255, 0.5)");
@@ -115,8 +110,6 @@ export class Board {
                 this.draggedPiece.setPosition([posX - squareSize/2, posY - squareSize/2]);
                 this.draggedPiece.draw(this.#canvas, this.#ctx);
             }
-
-            
 
         } else {
             this.drawBoard();
@@ -135,33 +128,14 @@ export class Board {
         }
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
-        //if(true)
         {
 
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
 
-
-            ///// DEBUG /////////////////
-            let legalMoves = this.pieceAt(caseClicked).legalMoves
-
-            let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-                                    squareSize,caseClicked,this.#isWhite),this.#isWhite);
-
-            this.possibleMoves = new Array();
-            for(let i = 0; i < legalMoves.length; i++) {
-                let [moveX, moveY] = legalMoves[i];
-
-                let pMove = [squareX + moveX, squareY + moveY] ;
-                this.possibleMoves.push(pMove);
-            }
-            //////////////////
-
+            this.#computeMoves(caseClicked);
             this.drawBoard();
         }
-
-
-
     }
 
     mouseUpEvent(e) {
@@ -172,7 +146,6 @@ export class Board {
     
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
-        //if(true)
         {
             let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
 
@@ -303,8 +276,16 @@ export class Board {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
         let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
 
-        if( (this.pieceAt(notation) && this.pieceAt(notation).isWhite != piece.isWhite)
-            || !this.pieceAt(notation)) {
+        let moveIsLegal = false;
+
+        for(let i = 0; i < this.possibleMoves.length; i++) {
+            if(notation == (utils.squareToNotation(this.possibleMoves[i],this.#isWhite))) {
+                moveIsLegal = true;
+            }
+        }
+
+        if(moveIsLegal && ((this.pieceAt(notation) && this.pieceAt(notation).isWhite != piece.isWhite)
+            || !this.pieceAt(notation)) ) {
         
             //Eat
             this.removeAt(notation);
@@ -328,6 +309,22 @@ export class Board {
             this.draggedPiece.setNotationPos(this.draggedPiece.notation);
             delete this.draggedPiece;
             this.drawBoard();
+        }
+    }
+
+    #computeMoves(caseClicked) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
+        let legalMoves = this.pieceAt(caseClicked).legalMoves
+
+        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+                                squareSize,caseClicked,this.#isWhite),this.#isWhite);
+
+        this.possibleMoves = new Array();
+        for(let i = 0; i < legalMoves.length; i++) {
+            let [moveX, moveY] = legalMoves[i];
+
+            let pMove = [squareX + moveX, squareY + moveY] ;
+            this.possibleMoves.push(pMove);
         }
     }
 

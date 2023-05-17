@@ -349,7 +349,7 @@ export class Pawn extends Piece {
         let i = this._isWhite ? 1 : -1;
 
         if(!this._hasMoved) {
-            lMoves.push([0, -i]);
+            
             lMoves.push([0, -i*2]);
             //TODO en passant
         }
