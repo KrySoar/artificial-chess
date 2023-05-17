@@ -79,22 +79,6 @@ export class Piece {
 
 export class King extends Piece {
     _tileX = 0;
-    //_defMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
-    _defMoves = [
-        [-1,-1], [0, -1], [1, -1],
-        [-1,0],            [1, 0],
-        [-1, 1], [0,  1], [1,  1],
-    ];
-
-    constructor(notationPos, isWhite, tileset, board) {
-        super(notationPos, isWhite, tileset, board);
-    }
-
-}
-
-export class Queen extends Piece {
-    _tileX = 1;
-    //_defMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
     _defMoves = [
         [-1,-1], [0, -1], [1, -1],
         [-1,0],            [1, 0],
@@ -113,47 +97,61 @@ export class Queen extends Piece {
 
         
         for(const [moveX, moveY] of this._defMoves) {
+
+            let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
+            let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
+
+            lMoves.push([moveX, moveY]);
+
+            if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
+                if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
+                        lMoves.pop(); 
+                }
+            }
+        }
+        
+
+        return lMoves;
+    }
+
+}
+
+export class Queen extends Piece {
+    _tileX = 1;
+    _defMoves = [
+        [-1,-1], [0, -1], [1, -1],
+        [-1,0],            [1, 0],
+        [-1, 1], [0,  1], [1,  1],
+    ];
+
+    constructor(notationPos, isWhite, tileset, board) {
+        super(notationPos, isWhite, tileset, board);
+    }
+
+    get legalMoves() {
+        let lMoves = new Array();
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+
+        //TODO a function for the tree ray-moving pieces
+        for(const [moveX, moveY] of this._defMoves) {
             for(let i = 0; i <= 7; i++) {
     
                 let iX = 0;
                 let iY = 0;
 
-                if(moveX == 0 && moveY < 0) {
-                    iY -= i;
+                if(moveX > 0) {
+                    iX +=i;
+                } else if (moveX < 0) {
+                    iX -=i;
                 }
 
-                if(moveX == 0 && moveY > 0) {
-                    iY += i;
+                if(moveY > 0) {
+                    iY +=i;
+                } else if (moveY < 0) {
+                    iY -=i;
                 }
-
-                if(moveX < 0 && moveY == 0) {
-                    iX -= i;
-                }
-
-                if(moveX > 0 && moveY == 0) {
-                    iX += i;
-                }
-
-                if(moveX < 0 && moveY < 0) {
-                    iX -= i;
-                    iY -= i;
-                }
-
-                if(moveX > 0 && moveY < 0) {
-                    iX += i;
-                    iY -= i;
-                }
-
-                if(moveX < 0 && moveY > 0) {
-                    iX -= i;
-                    iY += i;
-                }
-
-                if(moveX > 0 && moveY > 0) {
-                    iX += i;
-                    iY += i;
-                }
-
 
                 let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
                 let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
@@ -179,7 +177,6 @@ export class Queen extends Piece {
 
 export class Bishop extends Piece {
     _tileX = 2;
-    //_defMoves = [-9, -7, 7, 9];
     _defMoves = [
         [-1,-1], [1, -1],
         [-1, 1], [1,  1],
@@ -202,26 +199,17 @@ export class Bishop extends Piece {
                 let iX = 0;
                 let iY = 0;
 
-                if(moveX < 0 && moveY < 0) {
-                    iX -= i;
-                    iY -= i;
+                if(moveX > 0) {
+                    iX +=i;
+                } else if (moveX < 0) {
+                    iX -=i;
                 }
 
-                if(moveX > 0 && moveY < 0) {
-                    iX += i;
-                    iY -= i;
+                if(moveY > 0) {
+                    iY +=i;
+                } else if (moveY < 0) {
+                    iY -=i;
                 }
-
-                if(moveX < 0 && moveY > 0) {
-                    iX -= i;
-                    iY += i;
-                }
-
-                if(moveX > 0 && moveY > 0) {
-                    iX += i;
-                    iY += i;
-                }
-
 
                 let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
                 let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
@@ -247,7 +235,6 @@ export class Bishop extends Piece {
 
 export class Knight extends Piece {
     _tileX = 3;
-    //_defMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
     _defMoves = [
         [-1,-2], [1,-2],
         [-2,-1], [2,-1],
@@ -286,7 +273,6 @@ export class Knight extends Piece {
 
 export class Rook extends Piece {
     _tileX = 4;
-    //_defMoves = [-8, -1, 1, 8];
     _defMoves = [
         [0, -1],[-1,0],
         [1, 0], [0,  1]
@@ -309,22 +295,17 @@ export class Rook extends Piece {
                 let iX = 0;
                 let iY = 0;
 
-                if(moveX == 0 && moveY < 0) {
-                    iY -= i;
+                if(moveX > 0) {
+                    iX +=i;
+                } else if (moveX < 0) {
+                    iX -=i;
                 }
 
-                if(moveX == 0 && moveY > 0) {
-                    iY += i;
+                if(moveY > 0) {
+                    iY +=i;
+                } else if (moveY < 0) {
+                    iY -=i;
                 }
-
-                if(moveX < 0 && moveY == 0) {
-                    iX -= i;
-                }
-
-                if(moveX > 0 && moveY == 0) {
-                    iX += i;
-                }
-
 
                 let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
                 let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
@@ -350,7 +331,6 @@ export class Rook extends Piece {
 
 export class Pawn extends Piece {
     _tileX = 5;
-    //_defMoves = [-8];
     _defMoves = [
         [0,-1], 
     ];
