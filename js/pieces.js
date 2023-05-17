@@ -366,29 +366,33 @@ export class Pawn extends Piece {
         let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
             squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
+        let i = this._isWhite ? 1 : -1;
+
         if(!this._hasMoved) {
-            lMoves.push([0, -1]);
-            lMoves.push([0, -2]);
+            lMoves.push([0, -i]);
+            lMoves.push([0, -i*2]);
             //TODO en passant
         }
+
+        
         
         //TODO c'est la vérif qui dépends de la couleur vvvvvvvvvvvvvvvvv
-        let pieceA = this._board.pieceAtSquare([pSquareX - 1, pSquareY - 1]);
+        let pieceA = this._board.pieceAtSquare([pSquareX - i, pSquareY - i]);
         if(pieceA && pieceA.isWhite != this._isWhite)
         {
-            lMoves.push([-1, -1]);
+            lMoves.push([-i, -i]);
         }
 
-        let pieceB = this._board.pieceAtSquare([pSquareX, pSquareY - 1]);
+        let pieceB = this._board.pieceAtSquare([pSquareX, pSquareY - i]);
         if(!pieceB)
         {
-            lMoves.push([0, -1]);
+            lMoves.push([0, -i]);
         }
 
-        let pieceC = this._board.pieceAtSquare([pSquareX + 1, pSquareY - 1]);
+        let pieceC = this._board.pieceAtSquare([pSquareX + i, pSquareY - i]);
         if(pieceC && pieceC.isWhite != this._isWhite)
         {
-            lMoves.push([1, -1]);
+            lMoves.push([i, -i]);
         }
 
         return lMoves;

@@ -36,6 +36,7 @@ function init() {
     }, false);
 
 
+
     piecesImg.src = "../assets/imgs/chesspieces.png";
 
 }

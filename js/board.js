@@ -45,20 +45,23 @@ export class Board {
         }
 
         //In-between
-        if(this.possibleMoves) {
-            for(let i = 0; i < this.possibleMoves.length; i++) {
-                let [squareX, squareY] = this.possibleMoves[i];
-                //let color = "rgba(0, 100, 200, 0.3)";
-                let color = "rgba(0, 255, 255, 0.3)";
-                this.highlightSquare([squareX, squareY], color);
-            }
-        }
 
         //Pieces
         for(let i = 0;i < this.#pieces.length; i++) {
             
             if(this.#pieces[i] != null && this.#pieces[i] instanceof Piece) {
                 this.#pieces[i].draw(this.#canvas, this.#ctx);
+            }
+        }
+
+        
+        if(this.possibleMoves) {
+            for(let i = 0; i < this.possibleMoves.length; i++) {
+                let [squareX, squareY] = this.possibleMoves[i];
+                //let color = "rgba(0, 100, 200, 0.3)";
+                let color = "rgba(66, 135, 245, 0.3)";
+                color = "rgba(151, 94, 20, 0.5)";
+                this.moveCircle([squareX, squareY], color);
             }
         }
 
@@ -82,7 +85,18 @@ export class Board {
         let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
         this.#ctx.fillRect(posX, posY, this.#canvas.width / 8, this.#canvas.height / 8);
     }
+    
+    
 
+    moveCircle([squareX, squareY], color) {
+        this.#ctx.fillStyle = color;
+        let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
+        this.#ctx.beginPath();
+        let ratio  = 10;
+        let radius = this.#canvas.width / 8 / ratio;
+        this.#ctx.arc(posX+(radius*ratio/2), posY+(radius*ratio/2), radius, 0, 180);
+        this.#ctx.fill();
+    }
     mouseMoveEvent(e) {
         let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
@@ -138,11 +152,6 @@ export class Board {
             for(let i = 0; i < legalMoves.length; i++) {
                 let [moveX, moveY] = legalMoves[i];
 
-                if(!this.pieceAt(caseClicked).isWhite) {
-                    moveX = -moveX;
-                    moveY = -moveY;
-                }
-
                 let pMove = [squareX + moveX, squareY + moveY] ;
                 this.possibleMoves.push(pMove);
             }
@@ -177,6 +186,8 @@ export class Board {
         } else {
             this.cancelMove();
         }
+
+        delete this.possibleMoves;
     }
 
     #posIsOver([posX, posY]) {
