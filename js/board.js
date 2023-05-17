@@ -279,8 +279,11 @@ export class Board {
         let moveIsLegal = false;
 
         for(let i = 0; i < this.possibleMoves.length; i++) {
-            if(notation == (utils.squareToNotation(this.possibleMoves[i],this.#isWhite))) {
-                moveIsLegal = true;
+            let [moveX, moveY] = this.possibleMoves[i];
+            if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
+                if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
+                    moveIsLegal = true;
+                }
             }
         }
 

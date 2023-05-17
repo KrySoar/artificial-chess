@@ -53,6 +53,7 @@ export function squareToNotation([squareX, squareY], isWhite) {
     }
 
     return letters[squareX - 1].concat(squareY);
+
 }
 
 // export function notationToSquare(notation, isWhite) {
