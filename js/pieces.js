@@ -100,13 +100,23 @@ export class King extends Piece {
             let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
             let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
 
-            lMoves.push([moveX, moveY]);
+
+            let add = true;
+            let isAttacking =false;
+
+            
 
             if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
                 if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                        lMoves.pop(); 
-                }
+                        add = false;
+                } else if(nMovePiece && nMovePiece.isWhite != this._isWhite ) {
+                    isAttacking = true;
             }
+            }
+
+            if(add) {
+                lMoves.push([[moveX, moveY], isAttacking]);
+            };
         }
         
 
@@ -155,15 +165,22 @@ export class Queen extends Piece {
                 let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
                 let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
     
-                lMoves.push([moveX+iX, moveY+iY]);
+                let isAttacking = false;
+                let add = true;
+                
     
                 if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
                     if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                          lMoves.pop();  
+                          add = false;  
                           i = 8;
                     } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
+                        isAttacking = true;
                         i = 7;
                     }
+                }
+
+                if(add){
+                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
                 }
             }
         }
@@ -213,15 +230,22 @@ export class Bishop extends Piece {
                 let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
                 let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
     
-                lMoves.push([moveX+iX, moveY+iY]);
+                let isAttacking = false;
+                let add = true;
+                
     
                 if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
                     if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                          lMoves.pop();  
+                          add = false;  
                           i = 8;
                     } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
+                        isAttacking = true;
                         i = 7;
                     }
+                }
+
+                if(add){
+                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
                 }
             }
         }
@@ -256,12 +280,19 @@ export class Knight extends Piece {
             let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
             let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
 
-            lMoves.push([moveX, moveY]);
+            let add = true;
+            let isAttacking = false;
 
             if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
                 if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                      lMoves.pop();  
+                    add = false;
+                } else if(nMovePiece && nMovePiece.isWhite != this._isWhite ) {
+                    isAttacking = true;
                 }
+            }
+
+            if(add) {
+                lMoves.push([[moveX, moveY], isAttacking]);
             }
         }
 
@@ -309,15 +340,22 @@ export class Rook extends Piece {
                 let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
                 let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
     
-                lMoves.push([moveX+iX, moveY+iY]);
+                let isAttacking = false;
+                let add = true;
+                
     
                 if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
                     if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                          lMoves.pop();  
+                          add = false;  
                           i = 8;
                     } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
+                        isAttacking = true;
                         i = 7;
                     }
+                }
+
+                if(add){
+                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
                 }
             }
         }
@@ -349,39 +387,44 @@ export class Pawn extends Piece {
             squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
         let i = this._isWhite ? 1 : -1;
+        let firstRow = this._isWhite ? 7 : 2;
+
         if(!this._board.isWhite) {
             i = -i;
+            firstRow = 9 - firstRow;
         }
 
-        //TODO check if row == 7 || 2 instead (FEN Import problems)
-        if(!this._hasMoved) {
-            lMoves.push([0, -i*2]);
+        if(pSquareY == firstRow) {
+            if(!this._board.pieceAtSquare([pSquareX, pSquareY - i])
+            &&!this._board.pieceAtSquare([pSquareX, pSquareY - i*2])) {
+                lMoves.push([[0, -i*2], false]);
+            }
         }
 
         if(this._enPassantR) {
-            lMoves.push([i, -i]);
+            lMoves.push([[i, -i], true]);
         }
 
         if(this._enPassantL) {
-            lMoves.push([-i, -i]);
+            lMoves.push([[-i, -i], true]);
         }
 
         let pieceA = this._board.pieceAtSquare([pSquareX - i, pSquareY - i]);
         if(pieceA && pieceA.isWhite != this._isWhite)
         {
-            lMoves.push([-i, -i]);
+            lMoves.push([[-i, -i], true]);
         }
 
         let pieceB = this._board.pieceAtSquare([pSquareX, pSquareY - i]);
         if(!pieceB)
         {
-            lMoves.push([0, -i]);
+            lMoves.push([[0, -i], false]);
         }
 
         let pieceC = this._board.pieceAtSquare([pSquareX + i, pSquareY - i]);
         if(pieceC && pieceC.isWhite != this._isWhite)
         {
-            lMoves.push([i, -i]);
+            lMoves.push([[i, -i], true]);
         }
 
         return lMoves;

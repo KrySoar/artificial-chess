@@ -58,11 +58,15 @@ export class Board {
         
         if(this.possibleMoves) {
             for(let i = 0; i < this.possibleMoves.length; i++) {
-                let [squareX, squareY] = this.possibleMoves[i];
+                let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
                 //let color = "rgba(0, 100, 200, 0.3)";
                 let color = "rgba(66, 135, 245, 0.3)";
                 color = "rgba(151, 94, 20, 0.5)";
-                this.moveCircle([squareX, squareY], color);
+                if(!isAttacking) {
+                    this.moveCircle([squareX, squareY], color);
+                } else {
+                    this.highlightSquare([squareX, squareY], "rgba(200, 50, 50, 0.5)");
+                }
             }
         }
     }
@@ -283,7 +287,7 @@ export class Board {
         let moveIsLegal = true;
 
         for(let i = 0; i < this.possibleMoves.length; i++) {
-            let [moveX, moveY] = this.possibleMoves[i];
+            let [moveX, moveY] = this.possibleMoves[i][0];
             if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
                 if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
                     moveIsLegal = true;
@@ -327,10 +331,10 @@ export class Board {
 
         this.possibleMoves = new Array();
         for(let i = 0; i < legalMoves.length; i++) {
-            let [moveX, moveY] = legalMoves[i];
+            let [[moveX, moveY], isAttacking] = legalMoves[i];
 
-            let pMove = [squareX + moveX, squareY + moveY] ;
-            this.possibleMoves.push(pMove);
+            let pMove = [squareX + moveX, squareY + moveY];
+            this.possibleMoves.push([pMove,isAttacking]);
         }
     }
 
