@@ -285,7 +285,7 @@ export class Board {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
         let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
 
-        let moveIsLegal = true;
+        let moveIsLegal = false;
 
         for(let i = 0; i < this.possibleMoves.length; i++) {
             let [moveX, moveY] = this.possibleMoves[i][0];
