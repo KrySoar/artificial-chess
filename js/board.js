@@ -46,6 +46,19 @@ export class Board {
         }
 
         //In-between
+        if(this.possibleMoves) {
+            for(let i = 0; i < this.possibleMoves.length; i++) {
+                let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
+                //let color = "rgba(0, 100, 200, 0.3)";
+                let color = "rgba(66, 135, 245, 0.3)";
+                color = "rgba(151, 94, 20, 0.5)";
+                if(!isAttacking) {
+                    this.moveCircle([squareX, squareY], color);
+                } else {
+                    this.highlightSquare([squareX, squareY], color);
+                }
+            }
+        }
 
         //Pieces
         for(let i = 0;i < this.#pieces.length; i++) {
@@ -56,19 +69,7 @@ export class Board {
         }
 
         
-        if(this.possibleMoves) {
-            for(let i = 0; i < this.possibleMoves.length; i++) {
-                let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
-                //let color = "rgba(0, 100, 200, 0.3)";
-                let color = "rgba(66, 135, 245, 0.3)";
-                color = "rgba(151, 94, 20, 0.5)";
-                if(!isAttacking) {
-                    this.moveCircle([squareX, squareY], color);
-                } else {
-                    this.highlightSquare([squareX, squareY], "rgba(200, 50, 50, 0.5)");
-                }
-            }
-        }
+        
     }
 
     highlightIndex(index, color) {
@@ -93,8 +94,8 @@ export class Board {
         this.#ctx.fillStyle = color;
         let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
         this.#ctx.beginPath();
-        let ratio  = 10;
-        let radius = this.#canvas.width / 8 / ratio;
+        let ratio = 10;
+        let radius =  this.#canvas.width / 8 / ratio;
         this.#ctx.arc(posX+(radius*ratio/2), posY+(radius*ratio/2), radius, 0, 180);
         this.#ctx.fill();
     }
