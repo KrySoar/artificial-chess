@@ -374,9 +374,6 @@ export class Pawn extends Piece {
             //TODO en passant
         }
 
-        
-        
-        //TODO c'est la vérif qui dépends de la couleur vvvvvvvvvvvvvvvvv
         let pieceA = this._board.pieceAtSquare([pSquareX - i, pSquareY - i]);
         if(pieceA && pieceA.isWhite != this._isWhite)
         {
