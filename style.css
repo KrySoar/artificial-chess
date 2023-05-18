@@ -70,7 +70,8 @@ body {
 #board-container {
     margin-top: 2%;
     display: inline-flex;
-    border: 10px solid #975e14;
+    /* border: 10px solid #975e14; */
+    border: 5px solid #3a6cb5;
     border-radius: 5px;
     box-shadow: 0px 0px 20px rgb(200, 200, 200);
     width: 40%;

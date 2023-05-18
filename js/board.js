@@ -30,7 +30,7 @@ export class Board {
         let squareSize = this.#canvas.width / 8;
         this.#ctx.fillStyle = isColored ? "black" : "white";
         this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
-        //this.#ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
+        this.#ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
         this.#ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.#canvas.width / 8, this.#canvas.height / 8);
     }
     
@@ -49,9 +49,10 @@ export class Board {
         if(this.possibleMoves) {
             for(let i = 0; i < this.possibleMoves.length; i++) {
                 let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
-                //let color = "rgba(0, 100, 200, 0.3)";
-                let color = "rgba(66, 135, 245, 0.3)";
-                color = "rgba(151, 94, 20, 0.5)";
+                let color = "rgba(214, 155, 88, 0.7)";
+                
+                // color = "rgba(0, 102, 191, 0.9)";
+
                 if(!isAttacking) {
                     this.moveCircle([squareX, squareY], color);
                 } else {

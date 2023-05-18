@@ -38,7 +38,7 @@ function init() {
 
 
 
-    piecesImg.src = "../assets/imgs/chessAI.png";
+    piecesImg.src = "../assets/imgs/chesspieces.png";
 
 }
 
