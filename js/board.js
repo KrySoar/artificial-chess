@@ -50,13 +50,14 @@ export class Board {
             for(let i = 0; i < this.possibleMoves.length; i++) {
                 let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
                 let color = "rgba(214, 155, 88, 0.7)";
-                
-                // color = "rgba(0, 102, 191, 0.9)";
 
                 if(!isAttacking) {
                     this.moveCircle([squareX, squareY], color);
                 } else {
+                    this.#ctx.globalAlpha = 0.4;
                     this.highlightSquare([squareX, squareY], color);
+                    this.#ctx.globalAlpha = 1;
+
                 }
             }
         }
@@ -300,6 +301,7 @@ export class Board {
         if(moveIsLegal && ((this.pieceAt(notation) && this.pieceAt(notation).isWhite != piece.isWhite)
             || !this.pieceAt(notation)) ) {
         
+
             //Eat
             this.removeAt(notation);
 
@@ -310,6 +312,11 @@ export class Board {
             this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
 
             piece._hasMoved = true;
+
+            // En passant
+            if(piece.name == "Pawn" && Math.abs(oldNotation[1] - notation[1]) == 2 ) {
+                this.#computeEnPassant(piece, notation);
+            }
         } else {
             this.cancelMove();
         }
@@ -337,7 +344,41 @@ export class Board {
 
             let pMove = [squareX + moveX, squareY + moveY];
             this.possibleMoves.push([pMove,isAttacking]);
+
         }
+    }
+
+    #computeEnPassant(piece, notation) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
+        let [squareX, squareY] = utils.posToSquare(squareSize,this.pieceAt(notation).position,piece.isWhite);
+        squareX++;
+        squareY++;
+
+        let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
+        let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
+
+        if(!this.#isWhite) {
+            let pC = pieceLeft;
+            pieceLeft = pieceRight;
+            pieceRight = pC;
+        }
+
+        if(pieceRight) {
+            if(pieceRight.isWhite) {
+                pieceRight.enPassantL = (!piece.isWhite) ? true : false;
+            } else {
+                pieceRight.enPassantR = (piece.isWhite) ? true : false;
+            }
+        }
+
+        if(pieceLeft) {
+            if(pieceLeft.isWhite) {
+                pieceLeft.enPassantR = (!piece.isWhite) ? true : false;
+            } else {
+                pieceLeft.enPassantL = (piece.isWhite) ? true : false;
+            }
+        }
+
     }
 
 }

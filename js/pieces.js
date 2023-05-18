@@ -74,6 +74,10 @@ export class Piece {
         return this._defMoves;
     }
 
+    get position() {
+        return [this._posX, this._posY];
+    }
+
 }
 
 export class King extends Piece {
@@ -372,8 +376,8 @@ export class Pawn extends Piece {
         [0,-1], 
     ];
 
-    _enPassantR = false;
-    _enPassantL = false;
+    enPassantR = false;
+    enPassantL = false;
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
@@ -401,11 +405,11 @@ export class Pawn extends Piece {
             }
         }
 
-        if(this._enPassantR) {
+        if(this.enPassantR) {
             lMoves.push([[i, -i], true]);
         }
 
-        if(this._enPassantL) {
+        if(this.enPassantL) {
             lMoves.push([[-i, -i], true]);
         }
 
