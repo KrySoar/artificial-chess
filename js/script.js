@@ -7,9 +7,7 @@ function init() {
     const chessboard = new Board(canvas, ctx, true);
 
     window.addEventListener("mousemove", (e) => {
-        chessboard.mouseMoveEvent(e);
-
-        
+        chessboard.mouseMoveEvent(e);        
     });
 
     window.addEventListener("mousedown", (e) => {
