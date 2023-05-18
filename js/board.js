@@ -101,13 +101,14 @@ export class Board {
         this.#ctx.arc(posX+(radius*ratio/2), posY+(radius*ratio/2), radius, 0, 180);
         this.#ctx.fill();
     }
+
     mouseMoveEvent(e) {
         let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
     
         //real square size
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
-    
+
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
         {
@@ -132,13 +133,13 @@ export class Board {
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
 
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
-
-        //Right-click
-        if(e.button == 2 && this.draggedPiece){
+        
+        //Right-click or middle
+        if((e.button == 2 || e.button == 1) && this.draggedPiece){
             this.cancelMove();
         }
-        //If the mouse is over the board
-        if(this.#posIsOver([e.clientX, e.clientY]))
+        //If the mouse is over the board and left-click
+        if(this.#posIsOver([e.clientX, e.clientY]) && e.button == 0)
         {
 
             let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
@@ -314,8 +315,13 @@ export class Board {
             piece._hasMoved = true;
 
             // En passant
-            if(piece.name == "Pawn" && Math.abs(oldNotation[1] - notation[1]) == 2 ) {
-                this.#computeEnPassant(piece, notation);
+            if(piece.name == "Pawn") {
+
+                if(Math.abs(oldNotation[1] - notation[1]) == 2 ) {
+                    this.#computeEnPassant(piece, notation);
+                }
+
+                this.#checkEatEnPassant(piece, notation);
             }
         } else {
             this.cancelMove();
@@ -379,6 +385,26 @@ export class Board {
             }
         }
 
+    }
+
+    #checkEatEnPassant(piece, notation) {
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
+        let [squareX, squareY] = utils.posToSquare(squareSize,this.pieceAt(notation).position,piece.isWhite);
+        squareX++;
+        squareY++;
+
+        let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
+        let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
+        //pieceMove -> 
+        //if enPassantR && moveCase == enPassantR, remove pieceAt x-1
+
+        if(piece.enPassantR) {
+            if((pieceRight.notation[1] - notation[1]) == 1 ) {
+                console.log("EAT");
+            }
+        } else if (piece.enPassantL) {
+
+        }
     }
 
 }
