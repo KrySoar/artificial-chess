@@ -163,11 +163,10 @@ export class Board {
         {
             let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
 
-            this.movePiece(this.draggedPiece, caseReleased);
-            delete this.draggedPiece;
-
-            // console.log(this.toString());
-            // console.log(this.#pieces);
+            if(this.draggedPiece) {
+                this.movePiece(this.draggedPiece, caseReleased);
+                delete this.draggedPiece;
+            }
 
             this.drawBoard();
         } else {
@@ -303,9 +302,12 @@ export class Board {
             }
         }
 
+        if(piece.notation == notation) {
+            moveIsLegal = false;
+        }
+
         if(moveIsLegal && ((this.pieceAt(notation) && this.pieceAt(notation).isWhite != piece.isWhite)
             || !this.pieceAt(notation)) ) {
-        
 
             //Eat
             this.removeAt(notation);
