@@ -58,6 +58,24 @@ export class Piece {
         this._posY = posY;
     }
 
+    toChar() {
+        const pieceMap = {
+            "Piece": 'P',
+            "King": 'K',
+            "Queen": 'Q',
+            "Bishop": 'B',
+            "Knight": 'N',
+            "Rook": 'R',
+            "Pawn": 'P',
+        };
+
+        return pieceMap[this._name];
+    }
+
+    toString() {
+        return (this._isWhite ? 'w' : 'b')+this.toChar();
+    }
+
     get isWhite() {
         return this._isWhite;
     }
@@ -467,9 +485,12 @@ export class Pawn extends Piece {
     setNotationPos(notation) {
         let oldNotation = this.notation;
         super.setNotationPos(notation);
-        
+
         this.checkEatEnPassant(oldNotation);
-        this._board.removeEnPassants();
+
+        if(notation != oldNotation) {
+            this._board.removeEnPassants();
+        }
 
         if(Math.abs(oldNotation[1] - notation[1]) == 2 ) {
             this._board.computeEnPassant(this, notation);

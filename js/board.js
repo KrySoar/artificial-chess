@@ -6,6 +6,7 @@ export class Board {
     #ctx;
     #isWhite;
     #pieces;
+
     draggedPiece;
     possibleMoves;
     enPassantPawns;
@@ -30,15 +31,12 @@ export class Board {
 
     #drawSquare([posX, posY], isColored = false) {
         let squareSize = this.#canvas.width / 8;
-        this.#ctx.fillStyle = isColored ? "black" : "white";
-        this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
+        //this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
         this.#ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
         this.#ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.#canvas.width / 8, this.#canvas.height / 8);
     }
-    
-    drawBoard() {
 
-        //Squares
+    #drawBackground() {
         for(let y = 1; y <= 8; y++)
         {
             for(let x = 1; x <= 8; x++)
@@ -46,55 +44,9 @@ export class Board {
                 this.#drawSquare([x,y], ((x+y)%2 == 1));
             }
         }
-
-        //In-between
-        if(this.possibleMoves) {
-            for(let i = 0; i < this.possibleMoves.length; i++) {
-                let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
-                let color = "rgba(214, 155, 88, 0.7)";
-
-                if(!isAttacking) {
-                    this.moveCircle([squareX, squareY], color);
-                } else {
-                    this.#ctx.globalAlpha = 0.4;
-                    this.highlightSquare([squareX, squareY], color);
-                    this.#ctx.globalAlpha = 1;
-
-                }
-            }
-        }
-
-        //Pieces
-        for(let i = 0;i < this.#pieces.length; i++) {
-            
-            if(this.#pieces[i] != null && this.#pieces[i] instanceof Piece) {
-                this.#pieces[i].draw(this.#canvas, this.#ctx);
-            }
-        }
-
-        
-        
     }
 
-    highlightIndex(index, color) {
-        let x = index%8;
-        let y = Math.floor(index/8) +1;
-
-        if (x ==  0) {
-            x = 8;
-            y -= 1;
-        }
-
-        this.highlightSquare([x, y], color);
-    }
-    
-    highlightSquare([squareX, squareY], color) {
-        this.#ctx.fillStyle = color;
-        let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
-        this.#ctx.fillRect(posX, posY, this.#canvas.width / 8, this.#canvas.height / 8);
-    }
-
-    moveCircle([squareX, squareY], color) {
+    #moveCircle([squareX, squareY], color) {
         this.#ctx.fillStyle = color;
         let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
         this.#ctx.beginPath();
@@ -102,6 +54,51 @@ export class Board {
         let radius =  this.#canvas.width / 8 / ratio;
         this.#ctx.arc(posX+(radius*ratio/2), posY+(radius*ratio/2), radius, 0, 180);
         this.#ctx.fill();
+    }
+
+    #highlightSquare([squareX, squareY], color) {
+        this.#ctx.fillStyle = color;
+        let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
+        this.#ctx.fillRect(posX, posY, this.#canvas.width / 8, this.#canvas.height / 8);
+    }
+
+    #drawPossibleMoves() {
+        if(this.possibleMoves) {
+            for(let i = 0; i < this.possibleMoves.length; i++) {
+                let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
+                let color = "rgba(214, 155, 88, 0.7)";
+
+                if(!isAttacking) {
+                    this.#moveCircle([squareX, squareY], color);
+                } else {
+                    this.#ctx.globalAlpha = 0.4;
+                    this.#highlightSquare([squareX, squareY], color);
+                    this.#ctx.globalAlpha = 1;
+
+                }
+            }
+        }
+    }
+
+    #drawPieces() {
+        for(let i = 0;i < this.#pieces.length; i++) {
+            
+            if(this.#pieces[i] != null && this.#pieces[i] instanceof Piece) {
+                this.#pieces[i].draw(this.#canvas, this.#ctx);
+            }
+        }
+    }
+    
+    draw() {
+        this.#drawBackground();
+        this.#drawPossibleMoves();
+        //TODO draw selected square (with right click)
+        this.#drawPieces();
+    }
+
+    #posIsOver([posX, posY]) {
+        return (posX >= this.#canvas.getBoundingClientRect().x && posX <= this.#canvas.getBoundingClientRect().right
+            && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom)
     }
 
     mouseMoveEvent(e) {
@@ -114,7 +111,7 @@ export class Board {
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
         {
-            this.drawBoard();
+            this.draw();
 
             if(this.draggedPiece) {
 
@@ -126,7 +123,7 @@ export class Board {
             }
 
         } else {
-            this.drawBoard();
+            this.draw();
         }        
     }
 
@@ -148,7 +145,7 @@ export class Board {
             this.draggedPiece = this.pieceAt(caseClicked);
 
             this.#computeMoves(caseClicked);
-            this.drawBoard();
+            this.draw();
         }
     }
 
@@ -168,7 +165,7 @@ export class Board {
                 delete this.draggedPiece;
             }
 
-            this.drawBoard();
+            this.draw();
         } else {
             this.cancelMove();
         }
@@ -176,10 +173,7 @@ export class Board {
         delete this.possibleMoves;
     }
 
-    #posIsOver([posX, posY]) {
-        return (posX >= this.#canvas.getBoundingClientRect().x && posX <= this.#canvas.getBoundingClientRect().right
-            && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom)
-    }
+    
 
     importFEN(FEN, tileset) {
         //https://www.chess.com/terms/fen-chess
@@ -234,31 +228,11 @@ export class Board {
 
         let str = "";
 
-        const pieceMap = {
-            "Piece": 'P',
-            "King": 'K',
-            "Queen": 'Q',
-            "Bishop": 'B',
-            "Knight": 'N',
-            "Rook": 'R',
-            "Pawn": 'P',
-        };
-        
-
         for(let i = 0; i < this.#pieces.length; i++)
         {
             let piece = this.#pieces[i];
-            let colorChar = '';
-            let pieceString = "";
-            
-            if(piece) {
-                colorChar = piece.isWhite ? 'w' : 'b';
-                pieceString = colorChar + pieceMap[piece.name];
-            } else {
-                pieceString = "  ";
-            }
 
-            str += `[${pieceString}]`;
+            str += (piece) ? `[${piece.toString()}]` : "[  ]";
 
             if((i+1)%8 == 0) {
                 str += '\n';
@@ -285,10 +259,7 @@ export class Board {
         delete this.#pieces[(y - 1) * 8 + (x - 1)];
     }
 
-    movePiece(piece, notation) {
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
-
+    #checkMoveLegal(notation) {
         let moveIsLegal = false;
 
         if(this.possibleMoves) {
@@ -302,13 +273,21 @@ export class Board {
             }
         }
 
+        return moveIsLegal;
+    }
+
+    movePiece(piece, notation) {   
+        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
+        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+
+        let moveIsLegal = this.#checkMoveLegal(notation);
+
         if(piece.notation == notation) {
             moveIsLegal = false;
         }
 
-        if(moveIsLegal && ((this.pieceAt(notation) && this.pieceAt(notation).isWhite != piece.isWhite)
-            || !this.pieceAt(notation)) ) {
-
+        let victim = this.pieceAt(notation);
+        if(moveIsLegal && ((victim && victim.isWhite != piece.isWhite) || !victim) ) {
             //Eat
             this.removeAt(notation);
 
@@ -330,7 +309,6 @@ export class Board {
         if(this.draggedPiece) {
             this.draggedPiece.setNotationPos(this.draggedPiece.notation);
             delete this.draggedPiece;
-            this.drawBoard();
         }
     }
 
