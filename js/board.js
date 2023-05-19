@@ -7,13 +7,15 @@ export class Board {
     #isWhite;
     #pieces;
     draggedPiece;
-    possibleMoves; 
+    possibleMoves;
+    enPassantPawns;
 
     constructor(canvas, ctx, isWhite = true) {
         this.#canvas    = canvas;
         this.#ctx       = ctx;
         this.#isWhite   = isWhite;
         this.#pieces    =  new Array();
+        this.enPassantPawns = new Array();
         
     }
 
@@ -290,11 +292,13 @@ export class Board {
 
         let moveIsLegal = false;
 
-        for(let i = 0; i < this.possibleMoves.length; i++) {
-            let [moveX, moveY] = this.possibleMoves[i][0];
-            if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
-                if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
-                    moveIsLegal = true;
+        if(this.possibleMoves) {
+            for(let i = 0; i < this.possibleMoves.length; i++) {
+                let [moveX, moveY] = this.possibleMoves[i][0];
+                if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
+                    if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
+                        moveIsLegal = true;
+                    }
                 }
             }
         }
@@ -315,13 +319,19 @@ export class Board {
             piece._hasMoved = true;
 
             // En passant
+            if(this.enPassantPawns) {
+                for(let i = 0; i < this.enPassantPawns.length; i++) {
+                    this.enPassantPawns[i].enPassantL = false;
+                    this.enPassantPawns[i].enPassantR = false;
+                }
+            }
             if(piece.name == "Pawn") {
 
                 if(Math.abs(oldNotation[1] - notation[1]) == 2 ) {
                     this.#computeEnPassant(piece, notation);
                 }
 
-                this.#checkEatEnPassant(piece, notation);
+                //this.#checkEatEnPassant(piece, notation);
             }
         } else {
             this.cancelMove();
@@ -339,26 +349,30 @@ export class Board {
 
     #computeMoves(caseClicked) {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8;
-        let legalMoves = this.pieceAt(caseClicked).legalMoves
+        let piece = this.pieceAt(caseClicked);
 
-        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-                                squareSize,caseClicked,this.#isWhite),this.#isWhite);
-
-        this.possibleMoves = new Array();
-        for(let i = 0; i < legalMoves.length; i++) {
-            let [[moveX, moveY], isAttacking] = legalMoves[i];
-
-            let pMove = [squareX + moveX, squareY + moveY];
-            this.possibleMoves.push([pMove,isAttacking]);
-
+        if(piece) {
+            let legalMoves = piece.legalMoves
+    
+            let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+                                    squareSize,caseClicked,this.#isWhite),this.#isWhite);
+    
+            this.possibleMoves = new Array();
+            for(let i = 0; i < legalMoves.length; i++) {
+                let [[moveX, moveY], isAttacking] = legalMoves[i];
+    
+                let pMove = [squareX + moveX, squareY + moveY];
+                this.possibleMoves.push([pMove,isAttacking]);
+    
+            }
         }
+
     }
 
     #computeEnPassant(piece, notation) {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [squareX, squareY] = utils.posToSquare(squareSize,this.pieceAt(notation).position,piece.isWhite);
-        squareX++;
-        squareY++;
+        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,notation,this.#isWhite),this.#isWhite);
 
         let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
         let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
@@ -375,6 +389,10 @@ export class Board {
             } else {
                 pieceRight.enPassantR = (piece.isWhite) ? true : false;
             }
+
+            if(pieceRight.enPassantL || pieceRight.enPassantR) {
+                this.enPassantPawns.push(pieceRight);
+            }
         }
 
         if(pieceLeft) {
@@ -383,15 +401,18 @@ export class Board {
             } else {
                 pieceLeft.enPassantL = (piece.isWhite) ? true : false;
             }
+
+            if(pieceLeft.enPassantL || pieceLeft.enPassantR) {
+                this.enPassantPawns.push(pieceLeft);
+            }
         }
 
     }
 
     #checkEatEnPassant(piece, notation) {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [squareX, squareY] = utils.posToSquare(squareSize,this.pieceAt(notation).position,piece.isWhite);
-        squareX++;
-        squareY++;
+        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,notation,this.#isWhite),this.#isWhite);
 
         let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
         let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
