@@ -6,6 +6,10 @@ function init() {
 
     const chessboard = new Board(canvas, ctx, true);
 
+    window.addEventListener("resize", (e) => {
+        chessboard.refreshSquareSize();
+    });
+
     window.addEventListener("mousemove", (e) => {
         chessboard.mouseMoveEvent(e);        
     });

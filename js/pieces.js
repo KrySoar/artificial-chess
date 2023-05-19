@@ -45,12 +45,18 @@ export class Piece {
     }
 
     setNotationPos(notation) {
+        let oldNotation = this.notation;
+
         let squareSize = this._board.canvas.width / 8;
 
         this._notationPos = notation;
         let [posX, posY] =  utils.notationToCoords(squareSize, this._notationPos, this._board.isWhite);
 
         this.setPosition([posX, posY]);
+
+        if(oldNotation != notation) {
+            this._board.removeEnPassants();
+        }
     }
 
     setPosition([posX, posY]) {
@@ -484,7 +490,15 @@ export class Pawn extends Piece {
 
     setNotationPos(notation) {
         let oldNotation = this.notation;
-        super.setNotationPos(notation);
+        
+        /// its own version because checkEatEnpassant() needs to be before removeEnPassants
+        let squareSize = this._board.canvas.width / 8;
+
+        this._notationPos = notation;
+        let [posX, posY] =  utils.notationToCoords(squareSize, this._notationPos, this._board.isWhite);
+
+        this.setPosition([posX, posY]);
+        ///
 
         this.checkEatEnPassant(oldNotation);
 

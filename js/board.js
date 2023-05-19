@@ -5,11 +5,13 @@ export class Board {
     #canvas;
     #ctx;
     #isWhite;
-    #pieces;
+    #pieces = [];
 
+    #defSquareSize;
+    realSquareSize;
     draggedPiece;
-    possibleMoves;
-    enPassantPawns;
+    possibleMoves = [];
+    enPassantPawns = [];
 
     constructor(canvas, ctx, isWhite = true) {
         this.#canvas    = canvas;
@@ -18,6 +20,8 @@ export class Board {
         this.#pieces    =  new Array();
         this.enPassantPawns = new Array();
         
+        this.#defSquareSize = this.#canvas.width / 8;
+        this.refreshSquareSize();
     }
 
     get isWhite()
@@ -30,12 +34,14 @@ export class Board {
     }
 
     #drawSquare([posX, posY], isColored = false) {
-        let squareSize = this.#canvas.width / 8;
         //this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
         this.#ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
-        this.#ctx.fillRect((posX-1) * squareSize,(posY-1) * squareSize, this.#canvas.width / 8, this.#canvas.height / 8);
+        this.#ctx.fillRect((posX-1) * this.#defSquareSize,(posY-1) * this.#defSquareSize, this.#defSquareSize, this.#defSquareSize);
     }
 
+    refreshSquareSize() {
+        this.realSquareSize = this.#canvas.getBoundingClientRect().width / 8;
+    }
     #drawBackground() {
         for(let y = 1; y <= 8; y++)
         {
@@ -104,9 +110,6 @@ export class Board {
     mouseMoveEvent(e) {
         let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
-    
-        //real square size
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
 
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
@@ -115,9 +118,9 @@ export class Board {
 
             if(this.draggedPiece) {
 
-                let ratio = (this.#canvas.getBoundingClientRect().width / 8) / (this.#canvas.width / 8 );
-                this.draggedPiece.setPosition([(posX / ratio) - (squareSize/ratio)/2,
-                                               (posY / ratio) - (squareSize/ratio)/2]);
+                let ratio = this.realSquareSize / (this.#canvas.width / 8 );
+                this.draggedPiece.setPosition([(posX / ratio) - (this.realSquareSize/ratio)/2,
+                                               (posY / ratio) - (this.realSquareSize/ratio)/2]);
                                                
                 this.draggedPiece.draw(this.#canvas, this.#ctx);
             }
@@ -130,8 +133,6 @@ export class Board {
     mouseDownEvent(e) {
         let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
-
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
         
         //Right-click or middle
         if((e.button == 2 || e.button == 1) && this.draggedPiece){
@@ -141,7 +142,7 @@ export class Board {
         if(this.#posIsOver([e.clientX, e.clientY]) && e.button == 0)
         {
 
-            let caseClicked = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
+            let caseClicked = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
 
             this.#computeMoves(caseClicked);
@@ -152,13 +153,11 @@ export class Board {
     mouseUpEvent(e) {
         let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
         let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
-
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
     
         //If the mouse is over the board
         if(this.#posIsOver([e.clientX, e.clientY]))
         {
-            let caseReleased = utils.coordsToNotation(squareSize, [posX,posY], this.#isWhite)
+            let caseReleased = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
 
             if(this.draggedPiece) {
                 this.movePiece(this.draggedPiece, caseReleased);
@@ -172,8 +171,6 @@ export class Board {
 
         delete this.possibleMoves;
     }
-
-    
 
     importFEN(FEN, tileset) {
         //https://www.chess.com/terms/fen-chess
@@ -243,8 +240,7 @@ export class Board {
     }
 
     pieceAt(notation) {
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
 
         return this.#pieces[(y - 1) * 8 + (x - 1)];
     }
@@ -254,8 +250,7 @@ export class Board {
     }
 
     removeAt(notation) {
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
         delete this.#pieces[(y - 1) * 8 + (x - 1)];
     }
 
@@ -276,9 +271,9 @@ export class Board {
         return moveIsLegal;
     }
 
-    movePiece(piece, notation) {   
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [x, y] = utils.posToSquare(squareSize, utils.notationToCoords(squareSize,notation,this.#isWhite));
+    movePiece(piece, notation) {
+
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
 
         let moveIsLegal = this.#checkMoveLegal(notation);
 
@@ -313,14 +308,13 @@ export class Board {
     }
 
     #computeMoves(caseClicked) {
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8;
         let piece = this.pieceAt(caseClicked);
 
         if(piece) {
             let legalMoves = piece.legalMoves
     
-            let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-                                    squareSize,caseClicked,this.#isWhite),this.#isWhite);
+            let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
+                                    this.realSquareSize,caseClicked,this.#isWhite),this.#isWhite);
     
             this.possibleMoves = new Array();
             for(let i = 0; i < legalMoves.length; i++) {
@@ -333,9 +327,8 @@ export class Board {
     }
 
     computeEnPassant(piece, notation) {
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-            squareSize,notation,this.#isWhite),this.#isWhite);
+        let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
+            this.realSquareSize,notation,this.#isWhite),this.#isWhite);
 
         let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
         let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
@@ -348,9 +341,9 @@ export class Board {
 
         if(pieceRight) {
             if(pieceRight.isWhite) {
-                pieceRight.enPassantL = (!piece.isWhite) ? true : false;
+                pieceRight.enPassantL = !piece.isWhite;
             } else {
-                pieceRight.enPassantR = (piece.isWhite) ? true : false;
+                pieceRight.enPassantR = piece.isWhite;
             }
 
             if(pieceRight.enPassantL || pieceRight.enPassantR) {
@@ -360,9 +353,9 @@ export class Board {
 
         if(pieceLeft) {
             if(pieceLeft.isWhite) {
-                pieceLeft.enPassantR = (!piece.isWhite) ? true : false;
+                pieceLeft.enPassantR = !piece.isWhite;
             } else {
-                pieceLeft.enPassantL = (piece.isWhite) ? true : false;
+                pieceLeft.enPassantL = piece.isWhite;
             }
 
             if(pieceLeft.enPassantL || pieceLeft.enPassantR) {
