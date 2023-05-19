@@ -318,21 +318,6 @@ export class Board {
 
             piece._hasMoved = true;
 
-            // En passant
-            if(this.enPassantPawns) {
-                for(let i = 0; i < this.enPassantPawns.length; i++) {
-                    this.enPassantPawns[i].enPassantL = false;
-                    this.enPassantPawns[i].enPassantR = false;
-                }
-            }
-            if(piece.name == "Pawn") {
-
-                if(Math.abs(oldNotation[1] - notation[1]) == 2 ) {
-                    this.#computeEnPassant(piece, notation);
-                }
-
-                //this.#checkEatEnPassant(piece, notation);
-            }
         } else {
             this.cancelMove();
         }
@@ -363,13 +348,11 @@ export class Board {
     
                 let pMove = [squareX + moveX, squareY + moveY];
                 this.possibleMoves.push([pMove,isAttacking]);
-    
             }
         }
-
     }
 
-    #computeEnPassant(piece, notation) {
+    computeEnPassant(piece, notation) {
         let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
         let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
             squareSize,notation,this.#isWhite),this.#isWhite);
@@ -406,25 +389,14 @@ export class Board {
                 this.enPassantPawns.push(pieceLeft);
             }
         }
-
     }
 
-    #checkEatEnPassant(piece, notation) {
-        let squareSize = this.#canvas.getBoundingClientRect().width / 8; 
-        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-            squareSize,notation,this.#isWhite),this.#isWhite);
-
-        let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
-        let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
-        //pieceMove -> 
-        //if enPassantR && moveCase == enPassantR, remove pieceAt x-1
-
-        if(piece.enPassantR) {
-            if((pieceRight.notation[1] - notation[1]) == 1 ) {
-                console.log("EAT");
+    removeEnPassants() {
+        if(this.enPassantPawns) {
+            for(let i = 0; i < this.enPassantPawns.length; i++) {
+                this.enPassantPawns[i].enPassantL = false;
+                this.enPassantPawns[i].enPassantR = false;
             }
-        } else if (piece.enPassantL) {
-
         }
     }
 

@@ -434,4 +434,46 @@ export class Pawn extends Piece {
         return lMoves;
     }
 
+    checkEatEnPassant(oldNotation) {
+        let squareSize = this._board.canvas.getBoundingClientRect().width / 8; 
+
+        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,oldNotation,this._board.isWhite),this._board.isWhite);
+            
+        let [newSquareX, newSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this.notation,this._board.isWhite),this._board.isWhite);
+
+        let i = this.isWhite ? 1 : -1;
+
+        if(!this._board.isWhite) {
+            i = -i;
+        }
+
+        let victim = this._board.pieceAtSquare([newSquareX, newSquareY + i]);
+
+        if(this.enPassantR) {
+            if(newSquareX - squareX == i &&  newSquareY - squareY == -i) {
+                this._board.removeAt(victim.notation);
+            }
+        } 
+
+        if(this.enPassantL) {
+            if(newSquareX - squareX == -i &&  newSquareY - squareY == -i) {
+                this._board.removeAt(victim.notation);
+            }
+        } 
+    }
+
+    setNotationPos(notation) {
+        let oldNotation = this.notation;
+        super.setNotationPos(notation);
+        
+        this.checkEatEnPassant(oldNotation);
+        this._board.removeEnPassants();
+
+        if(Math.abs(oldNotation[1] - notation[1]) == 2 ) {
+            this._board.computeEnPassant(this, notation);
+        }
+    }
+
 }
