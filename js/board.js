@@ -5,9 +5,10 @@ export class Board {
     #canvas;
     #ctx;
     #isWhite;
-    #pieces = [];
-
     #defSquareSize;
+    #pieces = [];
+    #threatMap = [];
+
     realSquareSize;
     draggedPiece;
     possibleMoves = [];
@@ -324,6 +325,10 @@ export class Board {
                 this.possibleMoves.push([pMove,isAttacking]);
             }
         }
+    }
+
+    #computeThreatMap() {
+        
     }
 
     computeEnPassant(piece, notation) {
