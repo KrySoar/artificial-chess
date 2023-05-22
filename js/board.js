@@ -7,6 +7,8 @@ export class Board {
     #isWhite;
     #defSquareSize;
     #pieces = [];
+
+    //TODO array of bits instead of coordinates, better optimization
     #threatMap = [];
 
     realSquareSize;
@@ -288,6 +290,11 @@ export class Board {
 
         let moveIsLegal = this.#checkMoveLegal(notation);
 
+        console.log("Name: ", piece.name,"is IN :", this.#isInThreatMap([x, y]))
+        if(piece.name == "King" && this.#isInThreatMap([x, y])) {
+            moveIsLegal = false;
+        }
+
         if(piece.notation == notation) {
             moveIsLegal = false;
         }
@@ -317,6 +324,17 @@ export class Board {
         }
     }
 
+    #isInThreatMap([squareX, squareY]) {
+        let isInIt = false;
+        
+        for(let [tX, tY] of this.#threatMap) {
+            if(squareX == tX && squareY == tY) {
+                isInIt = true;
+            }
+        }
+
+        return isInIt;
+    }
     //TODO pass the piece instead of the notation
     #computeMoves(caseClicked) {
         let possibleMoves = [];
