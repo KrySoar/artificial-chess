@@ -152,7 +152,9 @@ export class Board {
             let caseClicked = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
 
-            this.#computeThreatMap(true);
+            if(this.draggedPiece && this.draggedPiece.name == "King") {
+                this.#computeThreatMap(!this.draggedPiece.isWhite);
+            }
             console.log(this.#threatMap);
 
             this.#computeMoves(caseClicked);
