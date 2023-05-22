@@ -70,19 +70,17 @@ export class Board {
     }
 
     #drawPossibleMoves() {
-        if(this.possibleMoves) {
-            for(let i = 0; i < this.possibleMoves.length; i++) {
-                let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
-                let color = "rgba(214, 155, 88, 0.7)";
+        for(let i = 0; i < this.possibleMoves.length; i++) {
+            let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
+            let color = "rgba(214, 155, 88, 0.7)";
 
-                if(!isAttacking) {
-                    this.#moveCircle([squareX, squareY], color);
-                } else {
-                    this.#ctx.globalAlpha = 0.4;
-                    this.#highlightSquare([squareX, squareY], color);
-                    this.#ctx.globalAlpha = 1;
+            if(!isAttacking) {
+                this.#moveCircle([squareX, squareY], color);
+            } else {
+                this.#ctx.globalAlpha = 0.4;
+                this.#highlightSquare([squareX, squareY], color);
+                this.#ctx.globalAlpha = 1;
 
-                }
             }
         }
     }
@@ -170,7 +168,7 @@ export class Board {
             this.cancelMove();
         }
 
-        delete this.possibleMoves;
+        this.possibleMoves = [];
     }
 
     importFEN(FEN, tileset) {
@@ -258,13 +256,11 @@ export class Board {
     #checkMoveLegal(notation) {
         let moveIsLegal = false;
 
-        if(this.possibleMoves) {
-            for(let i = 0; i < this.possibleMoves.length; i++) {
-                let [moveX, moveY] = this.possibleMoves[i][0];
-                if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
-                    if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
-                        moveIsLegal = true;
-                    }
+        for(let i = 0; i < this.possibleMoves.length; i++) {
+            let [moveX, moveY] = this.possibleMoves[i][0];
+            if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
+                if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
+                    moveIsLegal = true;
                 }
             }
         }
@@ -317,7 +313,7 @@ export class Board {
             let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
                                     this.realSquareSize,caseClicked,this.#isWhite),this.#isWhite);
     
-            this.possibleMoves = new Array();
+            this.possibleMoves = [];
             for(let i = 0; i < legalMoves.length; i++) {
                 let [[moveX, moveY], isAttacking] = legalMoves[i];
     
@@ -327,8 +323,13 @@ export class Board {
         }
     }
 
-    #computeThreatMap() {
-        
+    #computeThreatMap(isWhite) {
+        this.#threatMap = [];
+        for(piece of this.#pieces) {
+            if(piece.isWhite == isWhite) {
+                this.#threatMap.push(piece.getLegalMoves());
+            }
+        }
     }
 
     computeEnPassant(piece, notation) {
