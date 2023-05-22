@@ -95,7 +95,97 @@ export class Piece {
     }
 
     get legalMoves() {
-        return this._defMoves;
+        let lMoves = new Array();
+        let squareSize = this._board.realSquareSize;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+            
+
+        for(const [moveX, moveY] of this._defMoves) {
+            for(let i = 0; i <= 7; i++) {
+    
+                let iX = 0;
+                let iY = 0;
+
+                if(moveX > 0) {
+                    iX +=i;
+                } else if (moveX < 0) {
+                    iX -=i;
+                }
+
+                if(moveY > 0) {
+                    iY +=i;
+                } else if (moveY < 0) {
+                    iY -=i;
+                }
+
+                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
+                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
+    
+                let isAttacking = false;
+                let add = true;
+                
+    
+                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
+                    if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
+                          add = false;  
+                          i = 8;
+                    } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
+                        isAttacking = true;
+                        i = 7;
+                    }
+                }
+
+                if(add){
+                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
+                }
+            }
+        }
+        
+
+        return lMoves;
+    }
+
+    get attackSquares() {
+        let squares = [];
+        let squareSize = this._board.realSquareSize;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+            
+
+        for(const [moveX, moveY] of this._defMoves) {
+            for(let i = 0; i <= 7; i++) {
+    
+                let iX = 0;
+                let iY = 0;
+
+                if(moveX > 0) {
+                    iX +=i;
+                } else if (moveX < 0) {
+                    iX -=i;
+                }
+
+                if(moveY > 0) {
+                    iY +=i;
+                } else if (moveY < 0) {
+                    iY -=i;
+                }
+
+                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
+                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
+    
+                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
+                    squares.push([nMoveX, nMoveY]);
+                    
+                    if(nMovePiece) {
+                          i = 8;
+                    }
+                }
+                    
+            }
+        }
+    
+        return squares;
     }
 
     get position() {
@@ -122,7 +212,7 @@ export class King extends Piece {
 
     get legalMoves() {
         let lMoves = new Array();
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let squareSize = this._board.realSquareSize;
         let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
             squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
@@ -155,6 +245,24 @@ export class King extends Piece {
         return lMoves;
     }
 
+    get attackSquares() {
+        let squares = [];
+        let squareSize = this._board.realSquareSize;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+
+        for(const [moveX, moveY] of this._defMoves) {
+            
+            let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
+
+            if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) { 
+                squares.push([nMoveX, nMoveY]);
+            }
+        }
+
+        return squares;
+    }
+
 }
 
 export class Queen extends Piece {
@@ -168,59 +276,6 @@ export class Queen extends Piece {
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
     }
-
-    get legalMoves() {
-        let lMoves = new Array();
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
-        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
-
-        //TODO a function for the tree ray-moving pieces
-        for(const [moveX, moveY] of this._defMoves) {
-            for(let i = 0; i <= 7; i++) {
-    
-                let iX = 0;
-                let iY = 0;
-
-                if(moveX > 0) {
-                    iX +=i;
-                } else if (moveX < 0) {
-                    iX -=i;
-                }
-
-                if(moveY > 0) {
-                    iY +=i;
-                } else if (moveY < 0) {
-                    iY -=i;
-                }
-
-                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
-                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
-    
-                let isAttacking = false;
-                let add = true;
-                
-    
-                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
-                    if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                          add = false;  
-                          i = 8;
-                    } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
-                        isAttacking = true;
-                        i = 7;
-                    }
-                }
-
-                if(add){
-                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
-                }
-            }
-        }
-        
-
-        return lMoves;
-    }
-
 }
 
 export class Bishop extends Piece {
@@ -233,59 +288,6 @@ export class Bishop extends Piece {
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
     }
-
-    get legalMoves() {
-        let lMoves = new Array();
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
-        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
-
-        
-        for(const [moveX, moveY] of this._defMoves) {
-            for(let i = 0; i <= 7; i++) {
-    
-                let iX = 0;
-                let iY = 0;
-
-                if(moveX > 0) {
-                    iX +=i;
-                } else if (moveX < 0) {
-                    iX -=i;
-                }
-
-                if(moveY > 0) {
-                    iY +=i;
-                } else if (moveY < 0) {
-                    iY -=i;
-                }
-
-                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
-                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
-    
-                let isAttacking = false;
-                let add = true;
-                
-    
-                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
-                    if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                          add = false;  
-                          i = 8;
-                    } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
-                        isAttacking = true;
-                        i = 7;
-                    }
-                }
-
-                if(add){
-                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
-                }
-            }
-        }
-        
-
-        return lMoves;
-    }
-
 }
 
 export class Knight extends Piece {
@@ -303,7 +305,7 @@ export class Knight extends Piece {
 
     get legalMoves() {
         let lMoves = new Array();
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let squareSize = this._board.realSquareSize;
         let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
             squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
@@ -331,6 +333,24 @@ export class Knight extends Piece {
         return lMoves;
     }
 
+    get attackSquares() {
+        let squares = [];
+        let squareSize = this._board.realSquareSize;
+        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
+
+        for(const [moveX, moveY] of this._defMoves) {
+            
+            let [nMoveX, nMoveY] = [pSquareX+moveX, pSquareY+moveY];
+
+            if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) { 
+                squares.push([nMoveX, nMoveY]);
+            }
+        }
+        
+        return squares;
+    }
+
 }
 
 export class Rook extends Piece {
@@ -343,59 +363,6 @@ export class Rook extends Piece {
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
     }
-
-    get legalMoves() {
-        let lMoves = new Array();
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
-        let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
-            squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
-
-        
-        for(const [moveX, moveY] of this._defMoves) {
-            for(let i = 0; i <= 7; i++) {
-    
-                let iX = 0;
-                let iY = 0;
-
-                if(moveX > 0) {
-                    iX +=i;
-                } else if (moveX < 0) {
-                    iX -=i;
-                }
-
-                if(moveY > 0) {
-                    iY +=i;
-                } else if (moveY < 0) {
-                    iY -=i;
-                }
-
-                let [nMoveX, nMoveY] = [pSquareX+moveX+iX, pSquareY+moveY+iY];
-                let nMovePiece = this._board.pieceAtSquare([nMoveX, nMoveY]);
-    
-                let isAttacking = false;
-                let add = true;
-                
-    
-                if((nMoveX) >=1  && (nMoveX) <= 8 && (nMoveY) >=1  && (nMoveY) <= 8) {  
-                    if(nMovePiece && nMovePiece.isWhite == this._isWhite ) {
-                          add = false;  
-                          i = 8;
-                    } else if (nMovePiece && nMovePiece.isWhite != this._isWhite) {
-                        isAttacking = true;
-                        i = 7;
-                    }
-                }
-
-                if(add){
-                    lMoves.push([[moveX+iX, moveY+iY], isAttacking]);
-                }
-            }
-        }
-        
-
-        return lMoves;
-    }
-
 }
 
 export class Pawn extends Piece {
@@ -414,7 +381,7 @@ export class Pawn extends Piece {
     get legalMoves() {
         let lMoves = new Array();
 
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8;
+        let squareSize = this._board.realSquareSize;
         let [pSquareX, pSquareY] = utils.posToSquare(squareSize,utils.notationToCoords(
             squareSize,this._notationPos,this._board.isWhite),this._board.isWhite);
 
@@ -462,8 +429,30 @@ export class Pawn extends Piece {
         return lMoves;
     }
 
+    get attackSquares() {
+        let squares = [];
+        let squareSize = this._board.realSquareSize;
+        let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
+            squareSize,this.notation,this._board.isWhite),this._board.isWhite);
+
+        let i = this._board.isWhite ? 1 : -1;
+        if(!this.isWhite) {
+            i = -i;
+        }
+
+        if(squareX - i > 0 && squareY - i > 0) {
+            squares.push([squareX - i, squareY - i]);
+        }
+
+        if(squareX + i <= 8 && squareY - i > 0) {
+            squares.push([squareX + i, squareY - i]);
+        }
+
+        return squares;
+    }
+
     checkEatEnPassant(oldNotation) {
-        let squareSize = this._board.canvas.getBoundingClientRect().width / 8; 
+        let squareSize = this._board.realSquareSize; 
 
         let [squareX, squareY] = utils.posToSquare(squareSize,utils.notationToCoords(
             squareSize,oldNotation,this._board.isWhite),this._board.isWhite);

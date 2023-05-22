@@ -85,6 +85,13 @@ export class Board {
         }
     }
 
+    #drawThreaMap() {
+        let color = "rgba(214, 0, 0, 0.3)";
+        for(let square of this.#threatMap) {
+            this.#highlightSquare(square, color);
+        }
+    }
+
     #drawPieces() {
         for(let i = 0;i < this.#pieces.length; i++) {
             
@@ -98,12 +105,13 @@ export class Board {
         this.#drawBackground();
         this.#drawPossibleMoves();
         //TODO draw selected square (with right click)
+        this.#drawThreaMap();
         this.#drawPieces();
     }
 
     #posIsOver([posX, posY]) {
         return (posX >= this.#canvas.getBoundingClientRect().x && posX <= this.#canvas.getBoundingClientRect().right
-            && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom)
+            && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom);
     }
 
     mouseMoveEvent(e) {
@@ -143,6 +151,9 @@ export class Board {
 
             let caseClicked = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
+
+            this.#computeThreatMap(true);
+            console.log(this.#threatMap);
 
             this.#computeMoves(caseClicked);
             this.draw();
@@ -325,9 +336,11 @@ export class Board {
 
     #computeThreatMap(isWhite) {
         this.#threatMap = [];
-        for(piece of this.#pieces) {
-            if(piece.isWhite == isWhite) {
-                this.#threatMap.push(piece.getLegalMoves());
+        for(let piece of this.#pieces) {
+            if(piece && piece.isWhite == isWhite) {
+                for(let square of piece.attackSquares) {
+                        this.#threatMap.push(square);
+                }
             }
         }
     }
