@@ -290,7 +290,6 @@ export class Board {
 
         let moveIsLegal = this.#checkMoveLegal(notation);
 
-        console.log("Name: ", piece.name,"is IN :", this.#isInThreatMap([x, y]))
         if(piece.name == "King" && this.#isInThreatMap([x, y])) {
             moveIsLegal = false;
         }
