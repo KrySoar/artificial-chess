@@ -56,7 +56,7 @@ export function squareToNotation([squareX, squareY], isWhite) {
 
 }
 
-// export function notationToSquare(notation, isWhite) {
+//TODO export function notationToSquare(notation, isWhite) {
 
 // }
 

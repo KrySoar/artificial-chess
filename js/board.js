@@ -107,7 +107,7 @@ export class Board {
         this.#drawBackground();
         this.#drawPossibleMoves();
         //TODO draw selected square (with right click)
-        this.#drawThreatMap();
+        //this.#drawThreatMap();
         this.#drawPieces();
     }
 
@@ -186,6 +186,7 @@ export class Board {
         this.possibleMoves = [];
     }
 
+    //TODO Import PGN
     importFEN(FEN, tileset) {
         //https://www.chess.com/terms/fen-chess
         //example starting game FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -198,7 +199,8 @@ export class Board {
             'R': Rook,
             'P': Pawn,
         }
-
+        
+        //TODO Finish importFEN
         let [position, trait, castling,
             enPassant, halfmoveNb, fullmoveNb] = FEN.split(' ');
 
@@ -229,7 +231,7 @@ export class Board {
 
     }
 
-    // exportFEN() {
+    //TODO  exportFEN() {
     //     let FEN;
 
     //     return FEN
@@ -268,10 +270,10 @@ export class Board {
         delete this.#pieces[(y - 1) * 8 + (x - 1)];
     }
 
-    //TODO #checkMoveLegal(piece, notation)
-    #checkMoveLegal(notation) {
+    #checkMoveLegal(piece, notation) {
         let moveIsLegal = false;
-        //then Maybe we can do piece.legalMoves instead
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
+
         for(let i = 0; i < this.possibleMoves.length; i++) {
             let [moveX, moveY] = this.possibleMoves[i][0];
             if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
@@ -281,6 +283,12 @@ export class Board {
             }
         }
 
+        if(piece.name == "King" && this.#isInThreatMap([x, y])
+        || piece.notation == notation) {
+
+            moveIsLegal = false;
+        }
+
         return moveIsLegal;
     }
 
@@ -288,15 +296,7 @@ export class Board {
 
         let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
 
-        let moveIsLegal = this.#checkMoveLegal(notation);
-
-        if(piece.name == "King" && this.#isInThreatMap([x, y])) {
-            moveIsLegal = false;
-        }
-
-        if(piece.notation == notation) {
-            moveIsLegal = false;
-        }
+        let moveIsLegal = this.#checkMoveLegal(piece, notation);
 
         let victim = this.pieceAt(notation);
         if(moveIsLegal && ((victim && victim.isWhite != piece.isWhite) || !victim) ) {
