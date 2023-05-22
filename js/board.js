@@ -85,7 +85,7 @@ export class Board {
         }
     }
 
-    #drawThreaMap() {
+    #drawThreatMap() {
         let color = "rgba(214, 0, 0, 0.3)";
         for(let square of this.#threatMap) {
             this.#highlightSquare(square, color);
@@ -105,7 +105,7 @@ export class Board {
         this.#drawBackground();
         this.#drawPossibleMoves();
         //TODO draw selected square (with right click)
-        this.#drawThreaMap();
+        this.#drawThreatMap();
         this.#drawPieces();
     }
 
@@ -152,12 +152,12 @@ export class Board {
             let caseClicked = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
 
-            if(this.draggedPiece && this.draggedPiece.name == "King") {
-                this.#computeThreatMap(!this.draggedPiece.isWhite);
+            if(this.draggedPiece) {
+                this.#threatMap = this.#computeThreatMap(!this.draggedPiece.isWhite);
             }
             console.log(this.#threatMap);
 
-            this.#computeMoves(caseClicked);
+            this.possibleMoves = this.#computeMoves(caseClicked);
             this.draw();
         }
     }
@@ -266,9 +266,10 @@ export class Board {
         delete this.#pieces[(y - 1) * 8 + (x - 1)];
     }
 
+    //TODO #checkMoveLegal(piece, notation)
     #checkMoveLegal(notation) {
         let moveIsLegal = false;
-
+        //then Maybe we can do piece.legalMoves instead
         for(let i = 0; i < this.possibleMoves.length; i++) {
             let [moveX, moveY] = this.possibleMoves[i][0];
             if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
@@ -307,7 +308,6 @@ export class Board {
         } else {
             this.cancelMove();
         }
-       
     }
 
     cancelMove() {
@@ -317,7 +317,9 @@ export class Board {
         }
     }
 
+    //TODO pass the piece instead of the notation
     #computeMoves(caseClicked) {
+        let possibleMoves = [];
         let piece = this.pieceAt(caseClicked);
 
         if(piece) {
@@ -325,26 +327,29 @@ export class Board {
     
             let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
                                     this.realSquareSize,caseClicked,this.#isWhite),this.#isWhite);
-    
-            this.possibleMoves = [];
+
             for(let i = 0; i < legalMoves.length; i++) {
                 let [[moveX, moveY], isAttacking] = legalMoves[i];
     
                 let pMove = [squareX + moveX, squareY + moveY];
-                this.possibleMoves.push([pMove,isAttacking]);
+                possibleMoves.push([pMove,isAttacking]);
             }
         }
+
+        return possibleMoves;
     }
 
     #computeThreatMap(isWhite) {
-        this.#threatMap = [];
+        let threatMap = [];
         for(let piece of this.#pieces) {
             if(piece && piece.isWhite == isWhite) {
                 for(let square of piece.attackSquares) {
-                        this.#threatMap.push(square);
+                        threatMap.push(square);
                 }
             }
         }
+        
+        return threatMap;
     }
 
     computeEnPassant(piece, notation) {
