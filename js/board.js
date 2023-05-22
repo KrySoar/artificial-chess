@@ -270,6 +270,7 @@ export class Board {
         delete this.#pieces[(y - 1) * 8 + (x - 1)];
     }
 
+    //TODO make so that it checks the legalMoves for piece (this is not how it works, it depends on this.possibleMoves)
     #checkMoveLegal(piece, notation) {
         let moveIsLegal = false;
         let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
