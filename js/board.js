@@ -159,7 +159,7 @@ export class Board {
             }
             console.log(this.#threatMap);
 
-            this.possibleMoves = this.#computeMoves(caseClicked);
+            this.possibleMoves = this.#computeMoves(this.draggedPiece);
             this.draw();
         }
     }
@@ -334,16 +334,15 @@ export class Board {
 
         return isInIt;
     }
-    //TODO pass the piece instead of the notation
-    #computeMoves(caseClicked) {
+    
+    #computeMoves(piece) {
         let possibleMoves = [];
-        let piece = this.pieceAt(caseClicked);
 
         if(piece) {
             let legalMoves = piece.legalMoves
     
             let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
-                                    this.realSquareSize,caseClicked,this.#isWhite),this.#isWhite);
+                                    this.realSquareSize,piece.notation,this.#isWhite),this.#isWhite);
 
             for(let i = 0; i < legalMoves.length; i++) {
                 let [[moveX, moveY], isAttacking] = legalMoves[i];
