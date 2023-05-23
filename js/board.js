@@ -283,9 +283,8 @@ export class Board {
                 }
             }
         }
-
-        if(piece.name == "King" && this.#isInThreatMap([x, y])
-        || piece.notation == notation) {
+        
+        if(piece.notation == notation) {
 
             moveIsLegal = false;
         }
@@ -351,6 +350,10 @@ export class Board {
     
                 let pMove = [squareX + moveX, squareY + moveY];
                 possibleMoves.push([pMove,isAttacking]);
+
+                if(piece.name == "King" && this.#isInThreatMap(pMove)) {
+                    possibleMoves.pop();
+                }
             }
         }
 
@@ -369,6 +372,19 @@ export class Board {
         
         return threatMap;
     }
+
+    // #computeThreatMapAfter(isWhite, piece, notation) {
+    //     let threatMap = [];
+    //     for(let piece of this.#pieces) {
+    //         if(piece && piece.isWhite == isWhite) {
+    //             for(let square of piece.attackSquares) {
+    //                     threatMap.push(square);
+    //             }
+    //         }
+    //     }
+        
+    //     return threatMap;
+    // }
 
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
