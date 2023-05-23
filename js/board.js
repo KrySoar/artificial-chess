@@ -107,7 +107,7 @@ export class Board {
         this.#drawBackground();
         this.#drawPossibleMoves();
         //TODO draw selected square (with right click)
-        //this.#drawThreatMap();
+        this.#drawThreatMap();
         this.#drawPieces();
     }
 
