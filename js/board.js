@@ -283,7 +283,7 @@ export class Board {
                 }
             }
         }
-        
+
         if(piece.notation == notation) {
 
             moveIsLegal = false;
@@ -372,19 +372,6 @@ export class Board {
         
         return threatMap;
     }
-
-    // #computeThreatMapAfter(isWhite, piece, notation) {
-    //     let threatMap = [];
-    //     for(let piece of this.#pieces) {
-    //         if(piece && piece.isWhite == isWhite) {
-    //             for(let square of piece.attackSquares) {
-    //                     threatMap.push(square);
-    //             }
-    //         }
-    //     }
-        
-    //     return threatMap;
-    // }
 
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
