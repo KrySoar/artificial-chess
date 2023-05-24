@@ -371,7 +371,22 @@ export class Board {
         
         return threatMap;
     }
-    
+
+    #computeThreatMapAfter(isWhite, piece, notation) {
+        //TODO Recreate a full board, pass the board in pieces so you can compute the moves
+
+        let threatMapAfter = [];
+        for(let piece of this.#pieces) {
+            if(piece && piece.isWhite == isWhite) {
+                for(let square of piece.attackSquares) {
+                        threatMapAfter.push(square);
+                }
+            }
+        }
+        
+        return threatMapAfter;
+    }
+
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
             this.realSquareSize,notation,this.#isWhite),this.#isWhite);
