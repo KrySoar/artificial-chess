@@ -371,7 +371,7 @@ export class Board {
         
         return threatMap;
     }
-
+    
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
             this.realSquareSize,notation,this.#isWhite),this.#isWhite);
