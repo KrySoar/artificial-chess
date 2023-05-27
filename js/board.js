@@ -172,7 +172,8 @@ export class Board {
                 this._threatMap = this._computeThreatMap(!this.draggedPiece.isWhite);
 
                 ///Discovered Check
-                let fakeBoard = Object.assign({}, this);
+                //IMPOSSIBLE to copy an object with methods, maybe find another way to do it
+                let fakeBoard = structuredClone(this);
                 console.log("FB: ", fakeBoard);
                 for(let p of fakeBoard._pieces) {
                     if(p == this.draggedPiece) {
