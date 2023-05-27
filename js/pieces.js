@@ -202,12 +202,13 @@ export class King extends Piece {
         [-1, 1], [0,  1], [1,  1],
     ];
 
-    isAttacked;
+
+    isInCheck;
 
     constructor(notationPos, isWhite, tileset, board) {
         super(notationPos, isWhite, tileset, board);
 
-        this.isAttacked = false;
+        this.isInCheck = false;
     }
 
     get legalMoves() {

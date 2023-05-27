@@ -2,14 +2,14 @@ import * as utils from './utils.js';
 import {Piece, King, Queen, Bishop, Knight, Rook, Pawn} from './pieces.js';
 
 export class Board {
-    #canvas;
-    #ctx;
-    #isWhite;
-    #defSquareSize;
-    #pieces = [];
+    _canvas;
+    _ctx;
+    _isWhite;
+    _defSquareSize;
+    _pieces = [];
 
     //TODO array of bits instead of coordinates, better optimization
-    #threatMap = [];
+    _threatMap = [];
 
     realSquareSize;
     draggedPiece;
@@ -17,121 +17,135 @@ export class Board {
     enPassantPawns = [];
 
     constructor(canvas, ctx, isWhite = true) {
-        this.#canvas    = canvas;
-        this.#ctx       = ctx;
-        this.#isWhite   = isWhite;
-        this.#pieces    =  new Array();
+        this._canvas    = canvas;
+        this._ctx       = ctx;
+        this._isWhite   = isWhite;
+        this._pieces    =  new Array();
         this.enPassantPawns = new Array();
         
-        this.#defSquareSize = this.#canvas.width / 8;
+        this._defSquareSize = this._canvas.width / 8;
         this.refreshSquareSize();
     }
 
     get isWhite()
     {
-        return this.#isWhite;
+        return this._isWhite;
     }
 
     get canvas() {
-        return this.#canvas;
+        return this._canvas;
     }
 
-    #drawSquare([posX, posY], isColored = false) {
-        //this.#ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
-        this.#ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
-        this.#ctx.fillRect((posX-1) * this.#defSquareSize,(posY-1) * this.#defSquareSize, this.#defSquareSize, this.#defSquareSize);
+
+    _drawSquare([posX, posY], isColored = false) {
+        //this._ctx.fillStyle = isColored ? "#693e04" : "#ffc67a";
+        this._ctx.fillStyle = isColored ? "#5c84bf" : "#e8e8e8";
+        this._ctx.fillRect((posX-1) * this._defSquareSize,(posY-1) * this._defSquareSize, this._defSquareSize, this._defSquareSize);
     }
 
     refreshSquareSize() {
-        this.realSquareSize = this.#canvas.getBoundingClientRect().width / 8;
+        this.realSquareSize = this._canvas.getBoundingClientRect().width / 8;
     }
-    #drawBackground() {
+    _drawBackground() {
         for(let y = 1; y <= 8; y++)
         {
             for(let x = 1; x <= 8; x++)
             {
-                this.#drawSquare([x,y], ((x+y)%2 == 1));
+                this._drawSquare([x,y], ((x+y)%2 == 1));
             }
         }
     }
 
-    #moveCircle([squareX, squareY], color) {
-        this.#ctx.fillStyle = color;
-        let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
-        this.#ctx.beginPath();
+    _moveCircle([squareX, squareY], color) {
+        this._ctx.fillStyle = color;
+        let [posX, posY] = utils.squareToPos(this._canvas.width / 8, [squareX,squareY]);
+        this._ctx.beginPath();
         let ratio = 10;
-        let radius =  this.#canvas.width / 8 / ratio;
-        this.#ctx.arc(posX+(radius*ratio/2), posY+(radius*ratio/2), radius, 0, 180);
-        this.#ctx.fill();
+        let radius =  this._canvas.width / 8 / ratio;
+        this._ctx.arc(posX+(radius*ratio/2), posY+(radius*ratio/2), radius, 0, 180);
+        this._ctx.fill();
     }
 
-    #highlightSquare([squareX, squareY], color) {
-        this.#ctx.fillStyle = color;
-        let [posX, posY] = utils.squareToPos(this.#canvas.width / 8, [squareX,squareY]);
-        this.#ctx.fillRect(posX, posY, this.#canvas.width / 8, this.#canvas.height / 8);
+    _highlightSquare([squareX, squareY], color) {
+        this._ctx.fillStyle = color;
+        let [posX, posY] = utils.squareToPos(this._canvas.width / 8, [squareX,squareY]);
+        this._ctx.fillRect(posX, posY, this._canvas.width / 8, this._canvas.height / 8);
     }
 
-    #drawPossibleMoves() {
+    _drawPossibleMoves() {
         for(let i = 0; i < this.possibleMoves.length; i++) {
             let [[squareX, squareY], isAttacking] = this.possibleMoves[i];
             let color = "rgba(214, 155, 88, 0.7)";
 
             if(!isAttacking) {
-                this.#moveCircle([squareX, squareY], color);
+                this._moveCircle([squareX, squareY], color);
             } else {
-                this.#ctx.globalAlpha = 0.4;
-                this.#highlightSquare([squareX, squareY], color);
-                this.#ctx.globalAlpha = 1;
+                this._ctx.globalAlpha = 0.4;
+                this._highlightSquare([squareX, squareY], color);
+                this._ctx.globalAlpha = 1;
 
             }
         }
     }
 
-    #drawThreatMap() {
-        let color = "rgba(214, 0, 0, 0.3)";
-        for(let square of this.#threatMap) {
-            this.#highlightSquare(square, color);
+    _drawThreatMap() {
+        let color = "rgba(255, 0, 255, 0.3)";
+        for(let square of this._threatMap) {
+            this._highlightSquare(square, color);
         }
     }
 
-    #drawPieces() {
-        for(let i = 0;i < this.#pieces.length; i++) {
+    _drawPieces() {
+        for(let i = 0;i < this._pieces.length; i++) {
             
-            if(this.#pieces[i] != null && this.#pieces[i] instanceof Piece) {
-                this.#pieces[i].draw(this.#canvas, this.#ctx);
+            if(this._pieces[i] != null && this._pieces[i] instanceof Piece) {
+                this._pieces[i].draw(this._canvas, this._ctx);
+            }
+        }
+    }
+
+    _drawInCheck() {
+        let squareX, squareY;
+        for(let p of this._pieces) {
+            if(p && p.name == "King" && p.isInCheck) {
+                [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
+                    this.realSquareSize,p.notation,this._isWhite),this._isWhite);
+
+                    this._highlightSquare([squareX, squareY],"#ff3838");
             }
         }
     }
     
     draw() {
-        this.#drawBackground();
-        this.#drawPossibleMoves();
+        this._drawBackground();
+        this._drawPossibleMoves();
         //TODO draw selected square (with right click)
-        this.#drawThreatMap();
-        this.#drawPieces();
+        this._drawThreatMap();
+        this._drawInCheck();
+        this._drawPieces();
     }
 
-    #posIsOver([posX, posY]) {
-        return (posX >= this.#canvas.getBoundingClientRect().x && posX <= this.#canvas.getBoundingClientRect().right
-            && posY >= this.#canvas.getBoundingClientRect().y && posY <= this.#canvas.getBoundingClientRect().bottom);
+    _posIsOver([posX, posY]) {
+        return (posX >= this._canvas.getBoundingClientRect().x && posX <= this._canvas.getBoundingClientRect().right
+            && posY >= this._canvas.getBoundingClientRect().y && posY <= this._canvas.getBoundingClientRect().bottom);
     }
 
     mouseMoveEvent(e) {
-        let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
-        let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
+        let posX = (e.clientX - this._canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this._canvas.getBoundingClientRect().y);
 
         //If the mouse is over the board
-        if(this.#posIsOver([e.clientX, e.clientY]))
+        if(this._posIsOver([e.clientX, e.clientY]))
         {
             this.draw();
 
             if(this.draggedPiece) {
 
-                let ratio = this.realSquareSize / (this.#canvas.width / 8 );
+                let ratio = this.realSquareSize / (this._canvas.width / 8 );
                 this.draggedPiece.setPosition([(posX / ratio) - (this.realSquareSize/ratio)/2,
                                                (posY / ratio) - (this.realSquareSize/ratio)/2]);
                                                
-                this.draggedPiece.draw(this.#canvas, this.#ctx);
+                this.draggedPiece.draw(this._canvas, this._ctx);
             }
 
         } else {
@@ -140,42 +154,53 @@ export class Board {
     }
 
     mouseDownEvent(e) {
-        let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
-        let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
+        let posX = (e.clientX - this._canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this._canvas.getBoundingClientRect().y);
         
         //Right-click or middle
         if((e.button == 2 || e.button == 1) && this.draggedPiece){
             this.cancelMove();
         }
         //If the mouse is over the board and left-click
-        if(this.#posIsOver([e.clientX, e.clientY]) && e.button == 0)
+        if(this._posIsOver([e.clientX, e.clientY]) && e.button == 0)
         {
 
-            let caseClicked = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
+            let caseClicked = utils.coordsToNotation(this.realSquareSize, [posX,posY], this._isWhite)
             this.draggedPiece = this.pieceAt(caseClicked);
 
             if(this.draggedPiece) {
-                this.#threatMap = this.#computeThreatMap(!this.draggedPiece.isWhite);
-            }
-            console.log(this.#threatMap);
+                this._threatMap = this._computeThreatMap(!this.draggedPiece.isWhite);
 
-            this.possibleMoves = this.#computeMoves(this.draggedPiece);
+                ///Discovered Check
+                let fakeBoard = Object.assign({}, this);
+                console.log("FB: ", fakeBoard);
+                for(let p of fakeBoard._pieces) {
+                    if(p == this.draggedPiece) {
+                        fakeBoard.possibleMoves = fakeBoard._computeMoves(this.draggedPiece);
+                        console.log(fakeBoard.possibleMoves);
+                    }
+                }
+            }
+
+            this.possibleMoves = this._computeMoves(this.draggedPiece);
             this.draw();
         }
     }
 
     mouseUpEvent(e) {
-        let posX = (e.clientX - this.#canvas.getBoundingClientRect().x);
-        let posY = (e.clientY - this.#canvas.getBoundingClientRect().y);
+        let posX = (e.clientX - this._canvas.getBoundingClientRect().x);
+        let posY = (e.clientY - this._canvas.getBoundingClientRect().y);
     
         //If the mouse is over the board
-        if(this.#posIsOver([e.clientX, e.clientY]))
+        if(this._posIsOver([e.clientX, e.clientY]))
         {
-            let caseReleased = utils.coordsToNotation(this.realSquareSize, [posX,posY], this.#isWhite)
+            let caseReleased = utils.coordsToNotation(this.realSquareSize, [posX,posY], this._isWhite)
 
             if(this.draggedPiece) {
                 this.movePiece(this.draggedPiece, caseReleased);
                 delete this.draggedPiece;
+
+                this._computeInCheck();
             }
 
             this.draw();
@@ -204,7 +229,7 @@ export class Board {
         let [position, trait, castling,
             enPassant, halfmoveNb, fullmoveNb] = FEN.split(' ');
 
-            if(!this.#isWhite) {
+            if(!this._isWhite) {
                 position = position.split('').reverse().join('');
             }
         
@@ -220,8 +245,8 @@ export class Board {
             }
 
             if(['K', 'Q', 'B', 'N', 'R', 'P', 'k', 'q', 'b', 'n', 'r', 'p'].includes(char)) {
-                this.#pieces[(y-1) * 8 + (x-1)] = new pieceMap[char.toUpperCase()](
-                    utils.squareToNotation([x,y], this.#isWhite),(char==char.toUpperCase()),tileset, this)
+                this._pieces[(y-1) * 8 + (x-1)] = new pieceMap[char.toUpperCase()](
+                    utils.squareToNotation([x,y], this._isWhite),(char==char.toUpperCase()),tileset, this)
                 x++;
             } else if(char == '/') {
                 y++;
@@ -241,9 +266,9 @@ export class Board {
 
         let str = "";
 
-        for(let i = 0; i < this.#pieces.length; i++)
+        for(let i = 0; i < this._pieces.length; i++)
         {
-            let piece = this.#pieces[i];
+            let piece = this._pieces[i];
 
             str += (piece) ? `[${piece.toString()}]` : "[  ]";
 
@@ -256,29 +281,29 @@ export class Board {
     }
 
     pieceAt(notation) {
-        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this._isWhite));
 
-        return this.#pieces[(y - 1) * 8 + (x - 1)];
+        return this._pieces[(y - 1) * 8 + (x - 1)];
     }
 
     pieceAtSquare([squareX, squareY]) {
-        return this.#pieces[(squareY - 1) * 8 + (squareX - 1)];
+        return this._pieces[(squareY - 1) * 8 + (squareX - 1)];
     }
 
     removeAt(notation) {
-        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
-        delete this.#pieces[(y - 1) * 8 + (x - 1)];
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this._isWhite));
+        delete this._pieces[(y - 1) * 8 + (x - 1)];
     }
 
     //TODO make so that it checks the legalMoves for piece (this is not how it works, it depends on this.possibleMoves)
-    #checkMoveLegal(piece, notation) {
+    _checkMoveLegal(piece, notation) {
         let moveIsLegal = false;
-        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this._isWhite));
 
         for(let i = 0; i < this.possibleMoves.length; i++) {
             let [moveX, moveY] = this.possibleMoves[i][0];
             if(moveX >= 1 && moveX <= 8 && moveY >= 1 && moveY <= 8) {
-                if(notation == utils.squareToNotation([moveX, moveY],this.#isWhite)) {
+                if(notation == utils.squareToNotation([moveX, moveY],this._isWhite)) {
                     moveIsLegal = true;
                 }
             }
@@ -294,9 +319,9 @@ export class Board {
 
     movePiece(piece, notation) {
 
-        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this.#isWhite));
+        let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this._isWhite));
 
-        let moveIsLegal = this.#checkMoveLegal(piece, notation);
+        let moveIsLegal = this._checkMoveLegal(piece, notation);
 
         let victim = this.pieceAt(notation);
         if(moveIsLegal && ((victim && victim.isWhite != piece.isWhite) || !victim) ) {
@@ -307,7 +332,7 @@ export class Board {
             this.removeAt(oldNotation);
 
             piece.setNotationPos(notation);
-            this.#pieces[(y - 1) * 8 + (x - 1)] = piece;
+            this._pieces[(y - 1) * 8 + (x - 1)] = piece;
 
             piece._hasMoved = true;
 
@@ -323,10 +348,10 @@ export class Board {
         }
     }
 
-    #isInThreatMap([squareX, squareY]) {
+    _isInThreatMap([squareX, squareY], threatMap = this._threatMap) {
         let isInIt = false;
         
-        for(let [tX, tY] of this.#threatMap) {
+        for(let [tX, tY] of threatMap) {
             if(squareX == tX && squareY == tY) {
                 isInIt = true;
             }
@@ -335,14 +360,14 @@ export class Board {
         return isInIt;
     }
     
-    #computeMoves(piece) {
+    _computeMoves(piece) {
         let possibleMoves = [];
 
         if(piece) {
             let legalMoves = piece.legalMoves
     
             let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
-                                    this.realSquareSize,piece.notation,this.#isWhite),this.#isWhite);
+                                    this.realSquareSize,piece.notation,this._isWhite),this._isWhite);
 
             for(let i = 0; i < legalMoves.length; i++) {
                 let [[moveX, moveY], isAttacking] = legalMoves[i];
@@ -350,7 +375,12 @@ export class Board {
                 let pMove = [squareX + moveX, squareY + moveY];
                 possibleMoves.push([pMove,isAttacking]);
 
-                if(piece.name == "King" && this.#isInThreatMap(pMove)) {
+                if(this.pieceAtSquare(pMove) && isAttacking
+                && this.pieceAtSquare(pMove).name == "King" ) {
+                    this.pieceAtSquare(pMove).isInCheck = true;
+                }
+
+                if(piece.name == "King" && this._isInThreatMap(pMove)) {
                     possibleMoves.pop();
                 }
             }
@@ -359,9 +389,9 @@ export class Board {
         return possibleMoves;
     }
 
-    #computeThreatMap(isWhite) {
+    _computeThreatMap(isWhite) {
         let threatMap = [];
-        for(let piece of this.#pieces) {
+        for(let piece of this._pieces) {
             if(piece && piece.isWhite == isWhite) {
                 for(let square of piece.attackSquares) {
                         threatMap.push(square);
@@ -372,13 +402,36 @@ export class Board {
         return threatMap;
     }
 
-    #computeThreatMapAfter(isWhite, piece, notation) {
+    _computeInCheck() {
+        let squareX, squareY;
+        for(let p of this._pieces) {
+            if(p && p.name == "King") {
+                [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
+                    this.realSquareSize,p.notation,this._isWhite),this._isWhite);
+
+                if(this._isInThreatMap([squareX, squareY],this._computeThreatMap(!p.isWhite))) {
+                    p.isInCheck = true;
+                } else {
+                    p.isInCheck = false;
+                }
+            }
+        }
+    }
+
+    _computeThreatMapAfter(isWhite, piece, notation) {
         //TODO Recreate a full board, pass the board in pieces so you can compute the moves
+        let boardAfter = structuredClone(this);
+
+        for(let p of boardAfter._pieces) {
+            if(p && p == piece) {
+                console.log(p);
+            }
+        }
 
         let threatMapAfter = [];
-        for(let piece of this.#pieces) {
-            if(piece && piece.isWhite == isWhite) {
-                for(let square of piece.attackSquares) {
+        for(let p of boardAfter._pieces) {
+            if(p && p.isWhite == isWhite) {
+                for(let square of p.attackSquares) {
                         threatMapAfter.push(square);
                 }
             }
@@ -389,12 +442,12 @@ export class Board {
 
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
-            this.realSquareSize,notation,this.#isWhite),this.#isWhite);
+            this.realSquareSize,notation,this._isWhite),this._isWhite);
 
         let pieceLeft = this.pieceAtSquare([squareX - 1, squareY]);
         let pieceRight = this.pieceAtSquare([squareX + 1, squareY]);
 
-        if(!this.#isWhite) {
+        if(!this._isWhite) {
             let pC = pieceLeft;
             pieceLeft = pieceRight;
             pieceRight = pC;
