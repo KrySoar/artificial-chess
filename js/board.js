@@ -120,7 +120,7 @@ export class Board {
         this._drawBackground();
         this._drawPossibleMoves();
         //TODO draw selected square (with right click)
-        this._drawThreatMap();
+        //this._drawThreatMap();
         this._drawInCheck();
         this._drawPieces();
     }
@@ -170,20 +170,14 @@ export class Board {
 
             if(this.draggedPiece) {
                 this._threatMap = this._computeThreatMap(!this.draggedPiece.isWhite);
+                this.possibleMoves = this._computeMoves(this.draggedPiece);
 
                 ///Discovered Check
-                //IMPOSSIBLE to copy an object with methods, maybe find another way to do it
-                let fakeBoard = structuredClone(this);
-                console.log("FB: ", fakeBoard);
-                for(let p of fakeBoard._pieces) {
-                    if(p == this.draggedPiece) {
-                        fakeBoard.possibleMoves = fakeBoard._computeMoves(this.draggedPiece);
-                        console.log(fakeBoard.possibleMoves);
-                    }
-                }
+                
+                
+                ///
             }
 
-            this.possibleMoves = this._computeMoves(this.draggedPiece);
             this.draw();
         }
     }
@@ -318,11 +312,11 @@ export class Board {
         return moveIsLegal;
     }
 
-    movePiece(piece, notation) {
+    movePiece(piece, notation, bypassLegal = false) {
 
         let [x, y] = utils.posToSquare(this.realSquareSize, utils.notationToCoords(this.realSquareSize,notation,this._isWhite));
 
-        let moveIsLegal = this._checkMoveLegal(piece, notation);
+        let moveIsLegal = bypassLegal ? true : this._checkMoveLegal(piece, notation);
 
         let victim = this.pieceAt(notation);
         if(moveIsLegal && ((victim && victim.isWhite != piece.isWhite) || !victim) ) {
@@ -419,27 +413,27 @@ export class Board {
         }
     }
 
-    _computeThreatMapAfter(isWhite, piece, notation) {
-        //TODO Recreate a full board, pass the board in pieces so you can compute the moves
-        let boardAfter = structuredClone(this);
+    // _computeThreatMapAfter(isWhite, piece, notation) {
+    //     //TODO Recreate a full board, pass the board in pieces so you can compute the moves
+    //     let boardAfter = structuredClone(this);
 
-        for(let p of boardAfter._pieces) {
-            if(p && p == piece) {
-                console.log(p);
-            }
-        }
+    //     for(let p of boardAfter._pieces) {
+    //         if(p && p == piece) {
+    //             console.log(p);
+    //         }
+    //     }
 
-        let threatMapAfter = [];
-        for(let p of boardAfter._pieces) {
-            if(p && p.isWhite == isWhite) {
-                for(let square of p.attackSquares) {
-                        threatMapAfter.push(square);
-                }
-            }
-        }
+    //     let threatMapAfter = [];
+    //     for(let p of boardAfter._pieces) {
+    //         if(p && p.isWhite == isWhite) {
+    //             for(let square of p.attackSquares) {
+    //                     threatMapAfter.push(square);
+    //             }
+    //         }
+    //     }
         
-        return threatMapAfter;
-    }
+    //     return threatMapAfter;
+    // }
 
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(

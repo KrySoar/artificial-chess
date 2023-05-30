@@ -2,7 +2,7 @@ export function posToSquare(squareSize, [posX, posY]) {
 
     let squareX = Math.floor(posX / squareSize) + 1;
     let squareY = Math.floor(posY / squareSize) + 1;
-
+    
     return [squareX, squareY];
 }
 
