@@ -192,6 +192,51 @@ export class Piece {
         return [this._posX, this._posY];
     }
 
+    equalTo(piece) {
+        let equality = false;
+
+        if(piece) {
+            equality = (piece._notationPos == this._notationPos
+                && piece._isWhite == this._isWhite
+                && piece._name == this._name);
+        }
+
+        return equality
+    }
+
+    clone(cloneBoard) {
+        const pieceMap = {
+            'King': King,
+            'Queen': Queen,
+            'Bishop': Bishop,
+            'Knight': Knight,
+            'Rook': Rook,
+            'Pawn': Pawn,
+        }
+
+        let clonedPiece = new pieceMap[this._name](this._notationPos, this._isWhite, this._tileset, cloneBoard);
+    
+        clonedPiece._posX = this.posX;
+        clonedPiece._posY = this.posY;
+
+        clonedPiece._defMoves = Array.from(this._defMoves);
+
+        clonedPiece._tileSquareSize = this._tileSquareSize;
+        clonedPiece._tileX = this._tileX;
+        clonedPiece._tileY = this._tileY;
+
+        clonedPiece._hasMoved = this._hasMoved;
+
+        if(this._name == 'King') {
+            clonedPiece.isInCheck = this.isInCheck;
+        } else if(this._name == 'Pawn') {
+            clonedPiece.enPassantR = this.enPassantR;
+            clonedPiece.enPassantL = this.enPassantL;
+        }
+
+        return clonedPiece;
+    }
+
 }
 
 export class King extends Piece {

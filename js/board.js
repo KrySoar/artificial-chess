@@ -7,8 +7,7 @@ export class Board {
     _isWhite;
     _defSquareSize;
     _pieces = [];
-
-    //TODO array of bits instead of coordinates, better optimization
+    
     _threatMap = [];
 
     realSquareSize;
@@ -173,8 +172,8 @@ export class Board {
                 this.possibleMoves = this._computeMoves(this.draggedPiece);
 
                 ///Discovered Check
-                
-                
+                let clonedBoard = this.clone();
+                console.log(clonedBoard);
                 ///
             }
 
@@ -480,6 +479,44 @@ export class Board {
                 this.enPassantPawns[i].enPassantR = false;
             }
         }
+    }
+
+    clone() {
+        let clonedBoard = new  Board(this.canvas, this.ctx,this.isWhite);
+
+        clonedBoard._defSquareSize = this._defSquareSize;
+
+        clonedBoard._pieces = [];
+        for(let piece of this._pieces) {
+            if(piece) {
+                clonedBoard._pieces.push(piece.clone(clonedBoard));
+            } else {
+                clonedBoard._pieces.push(undefined);
+            }
+        }
+        clonedBoard._threatMap = Array.from(this._threatMap);
+
+        clonedBoard.realSquareSize = this.realSquareSize;
+        
+        clonedBoard.draggedPiece = this.draggedPiece.clone(clonedBoard);
+        for(let piece of clonedBoard._pieces) {
+            if(piece && piece.equalTo(this.draggedPiece)) {
+                clonedBoard.enPassantPawns.push(piece);
+            }
+        }
+
+        clonedBoard.possibleMoves = Array.from(this.possibleMoves);
+
+        clonedBoard.enPassantPawns = [];
+        for(let piece of this.enPassantPawns) {
+            for(let p of clonedBoard._pieces) {
+                if(p && p.equalTo(piece)) {
+                    clonedBoard.enPassantPawns.push(p);
+                }
+            }
+        }
+
+        return clonedBoard;
     }
 
 }
