@@ -171,10 +171,20 @@ export class Board {
                 this._threatMap = this._computeThreatMap(!this.draggedPiece.isWhite);
                 this.possibleMoves = this._computeMoves(this.draggedPiece);
 
-                ///Discovered Check
+                ///////////////////Discovered Check////////////
                 let clonedBoard = this.clone();
-                console.log(clonedBoard);
-                ///
+                let cDraggedPiece;
+                for(let p of clonedBoard._pieces){
+                    if(p && p.equalTo(this.draggedPiece)) {
+                        cDraggedPiece = p;
+                    }
+                }
+
+                for(let [[moveX, moveY], isAttacking] of this.draggedPiece.legalMoves) {
+                    console.log([moveX, moveY]);
+                    _computeThreatMapAfter(this.draggedPiece.isWhite, piece, notation)
+                }
+                /////////////////////////////////////////////
             }
 
             this.draw();
