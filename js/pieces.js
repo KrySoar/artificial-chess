@@ -216,8 +216,8 @@ export class Piece {
 
         let clonedPiece = new pieceMap[this._name](this._notationPos, this._isWhite, this._tileset, cloneBoard);
     
-        clonedPiece._posX = this.posX;
-        clonedPiece._posY = this.posY;
+        clonedPiece._posX = this._posX;
+        clonedPiece._posY = this._posY;
 
         clonedPiece._defMoves = Array.from(this._defMoves);
 
