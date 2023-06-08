@@ -172,26 +172,14 @@ export class Board {
                 this.possibleMoves = this._computeMoves(this.draggedPiece);
 
                 ///////////////////Discovered Check////////////
-                let clonedBoard = this.clone();
-                let cDraggedPiece;
-                let cSquareX, cSquareY;
-
                 
-
-                for(let p of clonedBoard._pieces){
-                    if(p && p.equalTo(this.draggedPiece)) {
-                        cDraggedPiece = p;
-                        [cSquareX, cSquareY] = utils.posToSquare(this.realSquareSize, 
-                            utils.notationToCoords(this.realSquareSize, cDraggedPiece.notation, clonedBoard.isWhite));
-                    }
-                }
-
-                console.log([cSquareX, cSquareY]);
+                let [pSquareX, pSquareY] = utils.posToSquare(this.realSquareSize, 
+                    utils.notationToCoords(this.realSquareSize, this.draggedPiece.notation, this.isWhite));
                 
 
                 for(let [[moveX, moveY], isAttacking] of this.draggedPiece.legalMoves) {
-                    let moveNotation = utils.squareToNotation([moveX + cSquareX, moveY + cSquareY],clonedBoard.isWhite);
-                    let cThreatMap = _computeThreatMapAfter(cDraggedPiece.isWhite, cDraggedPiece, moveNotation)
+                    let moveNotation = utils.squareToNotation([moveX + pSquareX, moveY + pSquareY],this.isWhite);
+                    let threatMapAfter = this._computeThreatMapAfter(this.draggedPiece.isWhite, this.draggedPiece, moveNotation);
                 }
                 /////////////////////////////////////////////
             }
@@ -361,7 +349,10 @@ export class Board {
         }
     }
 
-    _isInThreatMap([squareX, squareY], threatMap = this._threatMap) {
+    _isInThreatMap(piece, threatMap = this._threatMap) {
+        let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
+            this.realSquareSize,piece.notation,this._isWhite),this._isWhite);
+
         let isInIt = false;
         
         for(let [tX, tY] of threatMap) {
@@ -393,7 +384,7 @@ export class Board {
                     this.pieceAtSquare(pMove).isInCheck = true;
                 }
 
-                if(piece.name == "King" && this._isInThreatMap(pMove)) {
+                if(piece.name == "King" && this._isInThreatMap(piece)) {
                     possibleMoves.pop();
                 }
             }
@@ -414,15 +405,26 @@ export class Board {
         
         return threatMap;
     }
+    
+    _computeThreatMapAfter(isWhite, piece, notation) {
+        //TODO Recreate a full board, pass the board in pieces so you can compute the moves
+        let boardAfter = this.clone();
+
+        for(let p of boardAfter._pieces) {
+            if(p && p.equalTo(piece)) {
+                console.log("PIECE: ",p);
+                boardAfter.movePiece(p, notation);
+            }
+        }
+
+        return boardAfter._computeThreatMap(isWhite);
+    }
 
     _computeInCheck() {
-        let squareX, squareY;
         for(let p of this._pieces) {
             if(p && p.name == "King") {
-                [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
-                    this.realSquareSize,p.notation,this._isWhite),this._isWhite);
 
-                if(this._isInThreatMap([squareX, squareY],this._computeThreatMap(!p.isWhite))) {
+                if(this._isInThreatMap(p, this._computeThreatMap(!p.isWhite))) {
                     p.isInCheck = true;
                 } else {
                     p.isInCheck = false;
@@ -431,27 +433,6 @@ export class Board {
         }
     }
 
-    _computeThreatMapAfter(isWhite, piece, notation) {
-        //TODO Recreate a full board, pass the board in pieces so you can compute the moves
-        let boardAfter = structuredClone(this);
-
-        for(let p of boardAfter._pieces) {
-            if(p && p == piece) {
-                console.log(p);
-            }
-        }
-
-        let threatMapAfter = [];
-        for(let p of boardAfter._pieces) {
-            if(p && p.isWhite == isWhite) {
-                for(let square of p.attackSquares) {
-                        threatMapAfter.push(square);
-                }
-            }
-        }
-        
-        return threatMapAfter;
-    }
 
     computeEnPassant(piece, notation) {
         let [squareX, squareY] = utils.posToSquare(this.realSquareSize,utils.notationToCoords(
