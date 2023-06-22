@@ -176,10 +176,22 @@ export class Board {
                 let [pSquareX, pSquareY] = utils.posToSquare(this.realSquareSize, 
                     utils.notationToCoords(this.realSquareSize, this.draggedPiece.notation, this.isWhite));
                 
+                let sameColorKing;
+
+                for(let p of this._pieces) {
+                    if(p && p.name == "King" && p.isWhite == this.draggedPiece.isWhite) {
+                        sameColorKing = p;
+                    }
+                }
 
                 for(let [[moveX, moveY], isAttacking] of this.draggedPiece.legalMoves) {
                     let moveNotation = utils.squareToNotation([moveX + pSquareX, moveY + pSquareY],this.isWhite);
                     let threatMapAfter = this._computeThreatMapAfter(this.draggedPiece.isWhite, this.draggedPiece, moveNotation);
+                    
+                    if(this._isInThreatMap(sameColorKing, threatMapAfter)) {
+                        //TODO remove move
+                    }
+                    
                 }
                 /////////////////////////////////////////////
             }
