@@ -190,6 +190,12 @@ export class Board {
                     
                     if(this._isInThreatMap(sameColorKing, threatMapAfter)) {
                         //TODO remove move
+                        //console.log(this.possibleMoves.indexOf([[moveX + pSquareX, moveY + pSquareY], isAttacking]));
+                        for(let i = 0; i < this.possibleMoves.length; i++) {
+                            if(this.possibleMoves[i] == [[moveX + pSquareX, moveY + pSquareY], isAttacking]) {
+                                console.log(i);
+                            }
+                        }
                     }
                     
                 }
@@ -424,7 +430,6 @@ export class Board {
 
         for(let p of boardAfter._pieces) {
             if(p && p.equalTo(piece)) {
-                console.log("PIECE: ",p);
                 boardAfter.movePiece(p, notation);
             }
         }
