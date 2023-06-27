@@ -172,40 +172,40 @@ export class Board {
                 this.possibleMoves = this._computeMoves(this.draggedPiece);
 
                 ///////////////////Discovered Check////////////
-                console.log(this.draggedPiece.legalMoves);
-                //console.log(this.possibleMoves);
-                // let [pSquareX, pSquareY] = utils.posToSquare(this.realSquareSize, 
-                //     utils.notationToCoords(this.realSquareSize, this.draggedPiece.notation, this.isWhite));
+
+                let [pSquareX, pSquareY] = utils.posToSquare(this.realSquareSize, 
+                    utils.notationToCoords(this.realSquareSize, this.draggedPiece.notation, this.isWhite));
                 
-                // let sameColorKing;
+                let sameColorKing;
 
-                // for(let p of this._pieces) {
-                //     if(p && p.name == "King" && p.isWhite == this.draggedPiece.isWhite) {
-                //         sameColorKing = p;
-                //     }
-                // }
+                for(let p of this._pieces) {
+                    if(p && p.name == "King" && p.isWhite == this.draggedPiece.isWhite) {
+                        sameColorKing = p;
+                    }
+                }
 
-                // for(let [[moveX, moveY], isAttacking] of this.draggedPiece.legalMoves) {
-                //     console.log([moveX + pSquareX, moveY + pSquareY])
-                //     let moveNotation = utils.squareToNotation([moveX + pSquareX, moveY + pSquareY],this.isWhite);
-                //     //console.log(moveNotation);
-                //     let threatMapAfter = this._computeThreatMapAfter(this.draggedPiece.isWhite, this.draggedPiece, moveNotation);
+                for(let [[moveX, moveY], isAttacking] of this.draggedPiece.legalMoves) {
+                    console.log([moveX + pSquareX, moveY + pSquareY])
+                    let moveNotation = utils.squareToNotation([moveX + pSquareX, moveY + pSquareY],this.isWhite);
+                    //console.log(moveNotation);
+                    let threatMapAfter = this._computeThreatMapAfter(this.draggedPiece.isWhite, this.draggedPiece, moveNotation);
                     
-                //     if(this._isInThreatMap(sameColorKing, threatMapAfter)) {
-                //         //TODO remove move
-                //         //console.log(this.possibleMoves);
+                    if(this._isInThreatMap(sameColorKing, threatMapAfter)) {
+                        console.log("OK");
+                        //TODO remove move
+                        //console.log(this.possibleMoves);
                         
-                //         for(let i = 0; i < this.possibleMoves.length; i++) {
-                //             if(this.possibleMoves[i][0][0] == (moveX + pSquareX)
-                //             && this.possibleMoves[i][0][1] == (moveY + pSquareY)) {
+                        for(let i = 0; i < this.possibleMoves.length; i++) {
+                            if(this.possibleMoves[i][0][0] == (moveX + pSquareX)
+                            && this.possibleMoves[i][0][1] == (moveY + pSquareY)) {
 
-                //                 console.log(i,this.possibleMoves);
-                //                 //this.possibleMoves.splice(i,1);
-                //             }
-                //         }
-                //     }
+                                console.log(i);
+                                //this.possibleMoves.splice(i,1);
+                            }
+                        }
+                    }
                     
-                // }
+                }
                 /////////////////////////////////////////////
             }
 
