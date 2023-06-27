@@ -172,7 +172,8 @@ export class Board {
                 this.possibleMoves = this._computeMoves(this.draggedPiece);
 
                 ///////////////////Discovered Check////////////
-                console.log(this.possibleMoves);
+                console.log(this.draggedPiece.legalMoves);
+                //console.log(this.possibleMoves);
                 // let [pSquareX, pSquareY] = utils.posToSquare(this.realSquareSize, 
                 //     utils.notationToCoords(this.realSquareSize, this.draggedPiece.notation, this.isWhite));
                 

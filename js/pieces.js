@@ -134,6 +134,8 @@ export class Piece {
                         isAttacking = true;
                         i = 7;
                     }
+                } else {
+                    add = false;
                 }
 
                 if(add){
